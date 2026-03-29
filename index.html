@@ -49,7 +49,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh}
 .turn.thinking{animation:tp 1s ease-in-out infinite}
 @keyframes tp{0%,100%{opacity:.5}50%{opacity:1;text-shadow:0 0 10px rgba(255,45,138,.4)}}
 
-#chessCanvas{width:100%!important;max-width:460px;aspect-ratio:1/.8;display:block;z-index:10;touch-action:none;cursor:pointer}
+#chessCanvas{width:92vw;height:74vw;max-width:460px;max-height:368px;display:block;z-index:10;touch-action:none;cursor:pointer;margin:0 auto}
 .hint{text-align:center;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mut);opacity:.5;z-index:20}
 
 .mp{width:92%;max-width:440px;padding:8px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;z-index:20;margin-bottom:12px;max-height:100px;overflow-y:auto}
@@ -533,11 +533,16 @@ let squareMeshes = []; // for raycasting
 function init3D() {
   scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x050710, 0.016);
-  const w = canvas.clientWidth, h = canvas.clientHeight;
+  let w = canvas.clientWidth || canvas.offsetWidth || 360;
+  let h = canvas.clientHeight || canvas.offsetHeight || 288;
+  if (w < 10) w = Math.min(window.innerWidth * 0.92, 460);
+  if (h < 10) h = w * 0.8;
+  canvas.width = w * (window.devicePixelRatio || 1);
+  canvas.height = h * (window.devicePixelRatio || 1);
   camera = new THREE.PerspectiveCamera(35, w/h, .1, 100);
   renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setSize(w,h);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -886,7 +891,9 @@ function bindInput() {
 
   // Resize
   window.addEventListener('resize', () => {
-    const w=canvas.clientWidth,h=canvas.clientHeight;
+    let w=canvas.clientWidth||360, h=canvas.clientHeight||288;
+    if (w<10) w=Math.min(window.innerWidth*.92,460);
+    if (h<10) h=w*.8;
     camera.aspect=w/h; camera.updateProjectionMatrix();
     renderer.setSize(w,h);
   });
@@ -931,10 +938,23 @@ function installPWA() {
 }
 
 // ============================================================
-//  INIT
+//  INIT — wait for layout + Three.js to load
 // ============================================================
-init3D();
-updateTurnLabel();
+function startApp() {
+  if (typeof THREE === 'undefined') {
+    document.getElementById('turnLabel').textContent = 'Error: 3D no cargó. Recarga la página.';
+    return;
+  }
+  try {
+    init3D();
+    updateTurnLabel();
+  } catch(e) {
+    console.error('Init error:', e);
+    document.getElementById('turnLabel').textContent = 'Error al iniciar 3D: ' + e.message;
+  }
+}
+if (document.readyState === 'complete') startApp();
+else window.addEventListener('load', startApp);
 </script>
 </body>
 </html>
