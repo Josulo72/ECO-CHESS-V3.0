@@ -1,0 +1,18 @@
+{
+  "name": "ECO Chess V3.0",
+  "short_name": "ECO Chess",
+  "description": "3D Chess Experience",
+  "start_url": "/ECO-CHESS-V3.0/",
+  "display": "standalone",
+  "background_color": "#05070c",
+  "theme_color": "#05070c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2305070c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' font-size='50' fill='%2300f0ff'>♛</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
