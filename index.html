@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="theme-color" content="#020617"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>ECO v3.0 ♟️</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟️</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--sky:#38bdf8;--pink:#f472b6;--bg:#020617;--card:#0f172a;--border:rgba(56,189,248,0.15)}
+body{background:var(--bg);font-family:'Outfit',sans-serif;color:#e2e8f0;overflow-x:hidden;min-height:100vh}
+
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInScale{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 30px rgba(56,189,248,0.12)}50%{box-shadow:0 0 60px rgba(56,189,248,0.28)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes heartFloat{0%{transform:translateY(0) scale(1) rotate(var(--rot,0deg));opacity:1}100%{transform:translateY(-105vh) scale(0.4) rotate(calc(var(--rot,0deg) + 180deg));opacity:0}}
+@keyframes lovePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes eco-rotate{
+  0%{transform:rotateY(-28deg) rotateX(14deg)}
+  25%{transform:rotateY(6deg) rotateX(-5deg)}
+  50%{transform:rotateY(28deg) rotateX(12deg)}
+  75%{transform:rotateY(4deg) rotateX(-3deg)}
+  100%{transform:rotateY(-28deg) rotateX(14deg)}}
+
+/* 3D LOGO */
+.logo-3d-wrap{perspective:500px;perspective-origin:50% 50%;margin-bottom:4px;display:flex;justify-content:center}
+.logo-eco{display:inline-block;font-family:'Space Mono',monospace;font-size:5.8rem;font-weight:700;
+  letter-spacing:24px;padding-right:24px;color:#bae6fd;animation:eco-rotate 10s ease-in-out infinite;
+  text-shadow:0 0 30px rgba(56,189,248,1),0 0 70px rgba(56,189,248,0.6),0 0 120px rgba(56,189,248,0.25),
+    1px 1px 0 #40aad8,2px 2px 0 #3596c5,3px 3px 0 #2a82b2,4px 4px 0 #1f6e9f,
+    5px 5px 0 #145a8c,6px 6px 0 #094679,7px 7px 0 #033266,8px 8px 0 #001e53,
+    9px 9px 0 #000a40,10px 10px 14px rgba(0,0,30,0.9)}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;justify-content:center;align-items:center;
+  background:radial-gradient(ellipse at 30% 40%,rgba(56,189,248,0.07) 0%,transparent 55%),
+  radial-gradient(ellipse at 70% 70%,rgba(244,114,182,0.04) 0%,transparent 50%)}
+.login-card{text-align:center;padding:44px 36px 32px;background:rgba(15,23,42,0.88);
+  border-radius:28px;border:1px solid var(--border);backdrop-filter:blur(24px);
+  width:92%;max-width:420px;animation:fadeInUp .9s ease-out;
+  box-shadow:0 0 80px rgba(56,189,248,0.06),0 40px 80px rgba(0,0,0,0.5)}
+.tagline{color:#475569;letter-spacing:6px;font-size:.72rem;margin:4px 0 6px;text-transform:uppercase;font-weight:600}
+.version-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;color:#38bdf8;
+  border:1px solid rgba(56,189,248,0.3);padding:2px 10px;border-radius:20px;margin-bottom:24px;letter-spacing:2px}
+.section-label{font-size:.6rem;letter-spacing:3px;color:#475569;text-transform:uppercase;margin-bottom:8px;text-align:left}
+.login-input{width:100%;padding:14px 18px;margin-bottom:6px;border-radius:14px;
+  border:1px solid rgba(56,189,248,0.18);background:rgba(2,6,23,0.7);color:#e2e8f0;
+  text-align:center;font-size:1rem;font-family:'Outfit',sans-serif;outline:none;
+  transition:border-color .3s,box-shadow .3s}
+.login-input:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 20px rgba(56,189,248,0.1)}
+
+/* DIFFICULTY */
+.diff-row{display:flex;gap:6px;margin:18px 0 20px}
+.diff-card{flex:1;padding:10px 4px 8px;border-radius:12px;border:1px solid rgba(56,189,248,0.08);
+  background:rgba(2,6,23,0.5);cursor:pointer;text-align:center;transition:all .25s}
+.diff-card:hover{border-color:rgba(56,189,248,0.25);background:rgba(56,189,248,0.06)}
+.diff-card.active{border-color:var(--sky);background:rgba(56,189,248,0.12);box-shadow:0 0 18px rgba(56,189,248,0.18)}
+.diff-icon{font-size:1.3rem;line-height:1;margin-bottom:4px}
+.diff-name{font-size:.6rem;color:#64748b;letter-spacing:1px;text-transform:uppercase;font-weight:600;line-height:1}
+.diff-card.active .diff-name{color:var(--sky)}
+
+.login-btn{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;padding:15px 30px;
+  border-radius:14px;font-weight:700;cursor:pointer;width:100%;color:#020617;font-size:1rem;
+  font-family:'Outfit',sans-serif;transition:transform .2s,box-shadow .3s;
+  box-shadow:0 4px 24px rgba(56,189,248,0.35);letter-spacing:.5px}
+.login-btn:active{transform:scale(.97)}
+.hint-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;gap:8px}
+.hint{font-size:.68rem;color:#334155;font-style:italic}
+.learn-link{font-size:.72rem;color:#38bdf8;cursor:pointer;border:1px solid rgba(56,189,248,0.3);
+  padding:5px 12px;border-radius:8px;transition:all .2s;font-family:'Space Mono',monospace;letter-spacing:.5px;white-space:nowrap}
+.learn-link:hover{background:rgba(56,189,248,0.1)}
+
+/* ECO LOVE BUTTON */
+.eco-love-btn{width:100%;margin-top:14px;padding:13px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(244,114,182,0.06));
+  border:1px solid rgba(244,114,182,0.3);cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:.78rem;color:#f472b6;letter-spacing:2px;transition:all .3s;
+  animation:lovePulse 3s ease-in-out infinite;
+  box-shadow:0 0 20px rgba(244,114,182,0.08)}
+.eco-love-btn:hover{background:linear-gradient(135deg,rgba(244,114,182,0.22),rgba(244,114,182,0.12));
+  box-shadow:0 0 30px rgba(244,114,182,0.2);transform:scale(1.01)}
+.eco-love-btn:active{transform:scale(.98)}
+
+/* LOVE MODAL */
+.love-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.95);display:flex;
+  justify-content:center;align-items:center;z-index:3000;backdrop-filter:blur(16px)}
+.love-card{text-align:center;padding:50px 44px;background:rgba(15,23,42,0.98);
+  border-radius:28px;border:1px solid rgba(244,114,182,0.3);animation:fadeInScale .7s ease-out;
+  max-width:88%;width:400px;box-shadow:0 0 80px rgba(244,114,182,0.1),0 0 200px rgba(244,114,182,0.05);
+  position:relative;overflow:hidden}
+.love-card::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(244,114,182,0.08) 0%,transparent 60%);
+  pointer-events:none}
+.love-rose{font-size:3.5rem;margin-bottom:18px;animation:lovePulse 2s ease-in-out infinite}
+.love-to{font-family:'Space Mono',monospace;font-size:.65rem;color:rgba(244,114,182,0.6);
+  letter-spacing:5px;text-transform:uppercase;margin-bottom:20px}
+.love-text{font-size:1.05rem;color:#f1e0f0;line-height:1.9;font-weight:300;margin-bottom:28px}
+.love-text em{font-style:normal;color:#f472b6;font-weight:600}
+.love-sign{font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(244,114,182,0.5);
+  letter-spacing:3px;margin-bottom:24px}
+.love-close{background:rgba(244,114,182,0.15);border:1px solid rgba(244,114,182,0.4);
+  color:#f472b6;padding:10px 28px;border-radius:12px;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;transition:all .2s}
+.love-close:hover{background:rgba(244,114,182,0.25)}
+.love-heart-particle{position:fixed;pointer-events:none;z-index:3001;font-size:1.5rem;animation:heartFloat 4s ease-in forwards}
+
+/* GAME LAYOUT */
+.app-container{min-height:100vh;padding:12px;display:flex;justify-content:center;
+  align-items:flex-start;background:radial-gradient(ellipse at 30% 50%,rgba(56,189,248,0.04) 0%,transparent 50%)}
+.layout{display:flex;gap:20px;width:100%;max-width:1100px;padding-top:10px}
+.board-section{flex:2;display:flex;flex-direction:column;align-items:center;gap:6px}
+
+/* CONTROLS */
+.board-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.view-toggle{display:flex;background:rgba(15,23,42,0.8);border:1px solid rgba(30,41,59,0.8);border-radius:10px;overflow:hidden}
+.view-btn{padding:7px 16px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.7rem;
+  color:#64748b;background:transparent;border:none;transition:all .2s;letter-spacing:1px}
+.view-btn.active{background:rgba(56,189,248,0.15);color:var(--sky)}
+.learn-btn-game{padding:7px 14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.7rem;
+  color:#64748b;background:rgba(15,23,42,0.8);border:1px solid rgba(30,41,59,0.8);
+  border-radius:10px;transition:all .2s}
+.learn-btn-game:hover{color:var(--sky);border-color:rgba(56,189,248,0.3)}
+.diff-badge{padding:5px 12px;font-size:.6rem;font-family:'Space Mono',monospace;
+  letter-spacing:1px;color:#64748b;background:rgba(15,23,42,0.6);border:1px solid rgba(30,41,59,0.6);border-radius:8px}
+.eco-btn-game{padding:7px 14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.7rem;
+  color:#f472b6;background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.25);
+  border-radius:10px;transition:all .2s;animation:lovePulse 3s ease-in-out infinite}
+.eco-btn-game:hover{background:rgba(244,114,182,0.18)}
+
+.board-outer{animation:pulseGlow 4s ease-in-out infinite;border-radius:10px;overflow:hidden;border:2px solid rgba(56,189,248,0.15)}
+.board-grid{display:grid;grid-template-columns:repeat(8,1fr)}
+.board-3d-wrap{border-radius:10px;overflow:hidden;border:2px solid rgba(56,189,248,0.15);animation:pulseGlow 4s ease-in-out infinite}
+
+/* TIMER */
+.timer{font-family:'Space Mono',monospace;font-size:1.8rem;padding:5px 20px;border-radius:12px;
+  background:rgba(15,23,42,0.8);display:flex;align-items:center;gap:10px}
+.timer-label{font-size:.6rem;opacity:.5;letter-spacing:3px;font-weight:400}
+.timer-josulo{color:#f472b6;border:1px solid rgba(244,114,182,0.2)}
+.timer-eco{color:var(--sky);border:1px solid rgba(56,189,248,0.2)}
+.timer-active{animation:blink 1.5s ease-in-out infinite}
+.status-bar{min-height:28px;color:#94a3b8;font-style:italic;font-size:.9rem;text-align:center;letter-spacing:.5px}
+
+/* 2D BOARD CELLS */
+.cell{display:flex;justify-content:center;align-items:center;position:relative;user-select:none;
+  -webkit-user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.cell-light{background:#334155}.cell-dark{background:#1e293b}
+.cell-selected{background:rgba(56,189,248,0.42)!important}
+.cell-lastmove-light{background:rgba(250,204,21,0.22)!important}
+.cell-lastmove-dark{background:rgba(250,204,21,0.16)!important}
+.cell .piece{line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));z-index:2;pointer-events:none}
+.legal-dot{position:absolute;width:28%;height:28%;border-radius:50%;background:rgba(56,189,248,0.35);pointer-events:none}
+.legal-capture{position:absolute;width:85%;height:85%;border-radius:50%;border:3px solid rgba(56,189,248,0.4);pointer-events:none}
+.coord{position:absolute;font-size:.5rem;font-family:'Space Mono',monospace;color:rgba(148,163,184,0.35);pointer-events:none;font-weight:700}
+.coord-rank{top:1px;left:3px}.coord-file{bottom:1px;right:3px}
+
+/* CHAT */
+.chat-section{flex:1;background:rgba(15,23,42,0.8);border-radius:20px;display:flex;
+  flex-direction:column;border:1px solid rgba(30,41,59,0.8);backdrop-filter:blur(10px);
+  min-width:240px;max-height:calc(100vh - 40px)}
+.chat-header{padding:14px;border-bottom:1px solid #1e293b;color:var(--sky);letter-spacing:3px;
+  font-weight:600;text-align:center;font-size:.75rem;font-family:'Space Mono',monospace}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+.msg{padding:8px 12px;border-radius:12px;font-size:.82rem;line-height:1.5;animation:slideIn .3s ease-out}
+.msg-josulo{background:rgba(244,114,182,0.1);border-left:3px solid #f472b6}
+.msg-eco{background:rgba(56,189,248,0.1);border-left:3px solid #38bdf8}
+.msg-sistema{background:rgba(100,116,139,0.1);border-left:3px solid #475569}
+.msg-sender{font-weight:600;font-size:.65rem;letter-spacing:1px;margin-bottom:2px}
+.msg-sender-josulo{color:#f472b6}.msg-sender-eco{color:var(--sky)}.msg-sender-sistema{color:#64748b}
+.chat-input-area{padding:10px;border-top:1px solid #1e293b;display:flex;gap:8px}
+.chat-input{flex:1;background:rgba(2,6,23,0.6);border:1px solid rgba(30,41,59,0.8);padding:11px 14px;
+  color:#e2e8f0;border-radius:12px;font-size:.82rem;font-family:'Outfit',sans-serif;outline:none;transition:border-color .3s}
+.chat-input:focus{border-color:rgba(56,189,248,0.4)}
+.send-btn{background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:var(--sky);
+  border-radius:12px;padding:0 16px;cursor:pointer;font-size:.9rem;transition:background .2s}
+.send-btn:active{background:rgba(56,189,248,0.3)}
+
+/* END OVERLAY */
+.end-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.88);display:flex;justify-content:center;
+  align-items:center;z-index:1000;backdrop-filter:blur(8px)}
+.end-card{text-align:center;padding:45px 50px;background:rgba(15,23,42,0.95);border-radius:28px;
+  border:1px solid rgba(56,189,248,0.2);animation:fadeInScale .6s ease-out;max-width:90%}
+.end-card h2{color:var(--sky);font-family:'Space Mono',monospace;margin:0 0 8px}
+.end-card .sub{color:#94a3b8;margin:0 0 8px}.end-card .stats{color:#475569;font-size:.78rem}
+.restart-btn{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;padding:14px 40px;
+  border-radius:14px;font-weight:700;cursor:pointer;color:#020617;font-size:1rem;
+  font-family:'Outfit',sans-serif;margin-top:18px;box-shadow:0 4px 20px rgba(56,189,248,0.3);transition:transform .2s}
+.restart-btn:active{transform:scale(.97)}
+
+/* LEARN MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.92);display:flex;
+  justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(10px);padding:16px}
+.modal-card{background:rgba(15,23,42,0.98);border-radius:24px;border:1px solid rgba(56,189,248,0.2);
+  width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column;animation:fadeInScale .4s ease-out}
+.modal-header{padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-family:'Space Mono',monospace;color:var(--sky);font-size:1rem;letter-spacing:2px}
+.modal-close{background:none;border:1px solid rgba(30,41,59,0.8);color:#64748b;cursor:pointer;
+  width:32px;height:32px;border-radius:8px;font-size:1rem;transition:all .2s}
+.modal-close:hover{color:var(--sky);border-color:rgba(56,189,248,0.4)}
+.modal-tabs{display:flex;padding:16px 24px 0;border-bottom:1px solid #1e293b}
+.tab-btn{padding:9px 16px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.68rem;
+  color:#64748b;background:transparent;border:none;border-bottom:2px solid transparent;
+  transition:all .2s;letter-spacing:.5px;margin-bottom:-1px}
+.tab-btn.active{color:var(--sky);border-bottom-color:var(--sky)}
+.modal-body{flex:1;overflow-y:auto;padding:20px 24px}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+.pieces-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.piece-card{background:rgba(2,6,23,0.5);border:1px solid rgba(30,41,59,0.8);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center}
+.piece-diagram{display:grid;grid-template-columns:repeat(5,18px);grid-template-rows:repeat(5,18px);gap:1px;flex-shrink:0}
+.pd-sq{width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.pd-dark{background:rgba(30,41,59,0.7)}.pd-light{background:rgba(51,65,85,0.5)}
+.pd-piece{background:rgba(56,189,248,0.6)!important;font-size:12px}
+.pd-move{background:rgba(56,189,248,0.25)!important}.pd-capture{background:rgba(244,114,182,0.25)!important}
+.piece-info h4{font-size:.85rem;color:#e2e8f0;margin-bottom:4px;font-weight:600}
+.piece-info p{font-size:.72rem;color:#94a3b8;line-height:1.5}
+.rule-block{margin-bottom:14px;background:rgba(2,6,23,0.4);border-radius:12px;padding:14px;border-left:3px solid rgba(56,189,248,0.3)}
+.rule-title{font-weight:700;color:var(--sky);font-size:.85rem;margin-bottom:5px}
+.rule-text{font-size:.78rem;color:#94a3b8;line-height:1.6}
+.tip{display:flex;gap:10px;padding:12px;background:rgba(2,6,23,0.4);border-radius:12px;margin-bottom:10px}
+.tip-num{color:var(--sky);font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;min-width:24px}
+.tip-text{font-size:.78rem;color:#94a3b8;line-height:1.6}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .layout{flex-direction:column;align-items:center;gap:12px}
+  .chat-section{width:100%;max-height:260px;min-height:180px}
+  .timer{font-size:1.4rem}
+  .logo-eco{font-size:4rem;letter-spacing:16px}}
+@media(max-width:500px){
+  .login-card{padding:36px 20px 26px}
+  .logo-eco{font-size:3.2rem;letter-spacing:12px;padding-right:12px}
+  .diff-name{font-size:.55rem}
+  .pieces-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="confetti-container" style="position:fixed;inset:0;pointer-events:none;z-index:9999"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+// ═══════════════════════════════════════════════════════
+//  CHESS ENGINE
+// ═══════════════════════════════════════════════════════
+const PIECES={wK:"♔",wQ:"♕",wR:"♖",wB:"♗",wN:"♘",wP:"♙",bK:"♚",bQ:"♛",bR:"♜",bB:"♝",bN:"♞",bP:"♟"};
+function initialBoard(){return[[{t:"r",c:"b"},{t:"n",c:"b"},{t:"b",c:"b"},{t:"q",c:"b"},{t:"k",c:"b"},{t:"b",c:"b"},{t:"n",c:"b"},{t:"r",c:"b"}],[{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"}],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"}],[{t:"r",c:"w"},{t:"n",c:"w"},{t:"b",c:"w"},{t:"q",c:"w"},{t:"k",c:"w"},{t:"b",c:"w"},{t:"n",c:"w"},{t:"r",c:"w"}]]}
+function cloneBoard(b){return b.map(r=>r.map(c=>c?{...c}:null))}
+function inBounds(r,c){return r>=0&&r<8&&c>=0&&c<8}
+function findKing(board,color){for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(board[r][c]&&board[r][c].t==="k"&&board[r][c].c===color)return[r,c];return null}
+function isAttacked(board,row,col,byColor){
+  for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const r=row+dr,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="n"&&board[r][c]?.c===byColor)return true}
+  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const r=row+dr,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="k"&&board[r][c]?.c===byColor)return true}
+  const pd=byColor==="w"?1:-1;for(const dc of[-1,1]){const r=row+pd,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="p"&&board[r][c]?.c===byColor)return true}
+  for(const[dr,dc]of[[0,1],[0,-1],[1,0],[-1,0]]){for(let i=1;i<8;i++){const r=row+dr*i,c=col+dc*i;if(!inBounds(r,c))break;if(board[r][c]){if(board[r][c].c===byColor&&(board[r][c].t==="r"||board[r][c].t==="q"))return true;break}}}
+  for(const[dr,dc]of[[1,1],[1,-1],[-1,1],[-1,-1]]){for(let i=1;i<8;i++){const r=row+dr*i,c=col+dc*i;if(!inBounds(r,c))break;if(board[r][c]){if(board[r][c].c===byColor&&(board[r][c].t==="b"||board[r][c].t==="q"))return true;break}}}
+  return false;
+}
+function isInCheck(board,color){const k=findKing(board,color);if(!k)return false;return isAttacked(board,k[0],k[1],color==="w"?"b":"w")}
+function pseudoMoves(board,color,castling,enPassant){
+  const moves=[];const dir=color==="w"?-1:1;const startRow=color==="w"?6:1;const promoRow=color==="w"?0:7;
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const p=board[r][c];if(!p||p.c!==color)continue;
+    if(p.t==="p"){if(inBounds(r+dir,c)&&!board[r+dir][c]){moves.push({fr:r,fc:c,tr:r+dir,tc:c,promo:r+dir===promoRow});if(r===startRow&&!board[r+2*dir][c])moves.push({fr:r,fc:c,tr:r+2*dir,tc:c})}for(const dc of[-1,1]){const nr=r+dir,nc=c+dc;if(!inBounds(nr,nc))continue;if(board[nr][nc]&&board[nr][nc].c!==color)moves.push({fr:r,fc:c,tr:nr,tc:nc,promo:nr===promoRow});if(enPassant&&enPassant[0]===nr&&enPassant[1]===nc)moves.push({fr:r,fc:c,tr:nr,tc:nc,ep:true})}}
+    if(p.t==="n"){for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const nr=r+dr,nc=c+dc;if(inBounds(nr,nc)&&(!board[nr][nc]||board[nr][nc].c!==color))moves.push({fr:r,fc:c,tr:nr,tc:nc})}}
+    const slide=(dirs)=>{for(const[dr,dc]of dirs)for(let i=1;i<8;i++){const nr=r+dr*i,nc=c+dc*i;if(!inBounds(nr,nc))break;if(board[nr][nc]){if(board[nr][nc].c!==color)moves.push({fr:r,fc:c,tr:nr,tc:nc});break}moves.push({fr:r,fc:c,tr:nr,tc:nc})}};
+    if(p.t==="b"||p.t==="q")slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
+    if(p.t==="r"||p.t==="q")slide([[0,1],[0,-1],[1,0],[-1,0]]);
+    if(p.t==="k"){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;if(inBounds(nr,nc)&&(!board[nr][nc]||board[nr][nc].c!==color))moves.push({fr:r,fc:c,tr:nr,tc:nc})}
+      const row=color==="w"?7:0;const en=color==="w"?"b":"w";
+      if(r===row&&c===4){if(castling[color+"K"]&&!board[row][5]&&!board[row][6]&&board[row][7]?.t==="r"&&board[row][7]?.c===color&&!isAttacked(board,row,4,en)&&!isAttacked(board,row,5,en)&&!isAttacked(board,row,6,en))moves.push({fr:r,fc:c,tr:row,tc:6,castle:"K"});if(castling[color+"Q"]&&!board[row][3]&&!board[row][2]&&!board[row][1]&&board[row][0]?.t==="r"&&board[row][0]?.c===color&&!isAttacked(board,row,4,en)&&!isAttacked(board,row,3,en)&&!isAttacked(board,row,2,en))moves.push({fr:r,fc:c,tr:row,tc:2,castle:"Q"})}
+    }
+  }
+  return moves;
+}
+function applyMove(board,move){const nb=cloneBoard(board);const piece=nb[move.fr][move.fc];nb[move.tr][move.tc]=piece;nb[move.fr][move.fc]=null;if(move.ep)nb[move.fr][move.tc]=null;if(move.castle){const row=move.fr;if(move.castle==="K"){nb[row][5]=nb[row][7];nb[row][7]=null}if(move.castle==="Q"){nb[row][3]=nb[row][0];nb[row][0]=null}}if(move.promo)nb[move.tr][move.tc]={t:"q",c:piece.c};return nb}
+function getLegalMoves(board,color,castling,enPassant){return pseudoMoves(board,color,castling,enPassant).filter(m=>{const nb=applyMove(board,m);return!isInCheck(nb,color)})}
+
+// ═══ AI ═══
+const PVAL={p:100,n:320,b:330,r:500,q:900,k:20000};
+function evalBoard(board,aiColor){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(!p)continue;const v=(PVAL[p.t]||0)+(3.5-Math.abs(r-3.5)+3.5-Math.abs(c-3.5))*2;if(p.c===aiColor)s+=v;else s-=v}return s}
+function updCE(board,move,castling){const nc={...castling};const p=board[move.fr][move.fc];if(p?.t==="k"){nc[p.c+"K"]=false;nc[p.c+"Q"]=false}if(p?.t==="r"){if(move.fc===0)nc[p.c+"Q"]=false;if(move.fc===7)nc[p.c+"K"]=false}return{nc,ne:p?.t==="p"&&Math.abs(move.tr-move.fr)===2?[(move.fr+move.tr)/2,move.fc]:null}}
+function minimax(board,depth,a,b,isMax,aiColor,castling,ep){
+  if(depth===0)return evalBoard(board,aiColor);
+  const cc=isMax?aiColor:(aiColor==="b"?"w":"b");
+  const moves=getLegalMoves(board,cc,castling,ep);
+  if(!moves.length){if(isInCheck(board,cc))return isMax?-50000:50000;return 0}
+  if(isMax){let best=-Infinity;for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,a,b,false,aiColor,nc,ne);best=Math.max(best,v);a=Math.max(a,v);if(b<=a)break}return best}
+  else{let best=Infinity;for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,a,b,true,aiColor,nc,ne);best=Math.min(best,v);b=Math.min(b,v);if(b<=a)break}return best}
+}
+function greedy(board,move,color){let s=Math.random();const t=board[move.tr][move.tc];const v={p:1,n:3,b:3.2,r:5,q:9,k:0};if(t)s+=v[t.t]*10;s+=(4-(Math.abs(move.tr-3.5)+Math.abs(move.tc-3.5)))*.5;if(isInCheck(applyMove(board,move),color==="w"?"b":"w"))s+=5;return s}
+function getBestMove(board,color,castling,ep,diff){
+  const moves=getLegalMoves(board,color,castling,ep);if(!moves.length)return null;
+  if(diff===1)return moves[Math.floor(Math.random()*moves.length)];
+  if(diff===2){const sc=moves.map(m=>({m,s:greedy(board,m,color)}));sc.sort((a,b)=>b.s-a.s);return sc[0].m}
+  const depth={3:1,4:2,5:3}[diff]||1;
+  let best=null,bestV=-Infinity;
+  for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,-Infinity,Infinity,false,color,nc,ne);if(v>bestV){bestV=v;best=m}}
+  return best;
+}
+
+// ═══════════════════════════════════════════════════════
+//  THREE.JS PIECE BUILDER
+// ═══════════════════════════════════════════════════════
+function createPieceMesh(type,isWhite){
+  const mat=new THREE.MeshPhongMaterial(isWhite
+    ?{color:0xf0e2cc,shininess:100,specular:0xffffff}
+    :{color:0x100820,shininess:70,specular:0x6633aa});
+  const g=new THREE.Group();
+  const add=(geom,y)=>{const m=new THREE.Mesh(geom,mat);m.position.y=y;m.castShadow=true;g.add(m)};
+  add(new THREE.CylinderGeometry(0.38,0.42,0.1,14),0.05);
+  if(type==="p"){add(new THREE.CylinderGeometry(0.19,0.27,0.28,12),0.19);add(new THREE.SphereGeometry(0.2,12,12),0.37)}
+  else if(type==="r"){add(new THREE.CylinderGeometry(0.25,0.27,0.48,12),0.34);add(new THREE.CylinderGeometry(0.29,0.29,0.1,12),0.63)}
+  else if(type==="n"){add(new THREE.CylinderGeometry(0.17,0.24,0.34,12),0.27);const h=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.4,0.32),mat);h.position.set(0.07,0.56,0);h.rotation.z=-0.28;h.castShadow=true;g.add(h)}
+  else if(type==="b"){add(new THREE.CylinderGeometry(0.11,0.22,0.58,12),0.39);add(new THREE.SphereGeometry(0.13,10,10),0.7);add(new THREE.SphereGeometry(0.065,8,8),0.84)}
+  else if(type==="q"){add(new THREE.CylinderGeometry(0.15,0.24,0.62,12),0.41);add(new THREE.SphereGeometry(0.19,12,12),0.74);for(let i=0;i<5;i++){const a=(i/5)*Math.PI*2;const cp=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.045,0.12,6),mat);cp.position.set(Math.cos(a)*0.15,0.95,Math.sin(a)*0.15);cp.castShadow=true;g.add(cp)}}
+  else if(type==="k"){add(new THREE.CylinderGeometry(0.17,0.24,0.64,12),0.42);const cv=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.3,0.08),mat);cv.position.y=0.9;cv.castShadow=true;g.add(cv);const ch=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.08,0.08),mat);ch.position.y=0.98;ch.castShadow=true;g.add(ch)}
+  return g;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BOARD 3D COMPONENT — fixed camera + board geometry
+// ═══════════════════════════════════════════════════════
+function Board3D({board,selected,legalMoves,lastMove,onCellClick,size}){
+  const mountRef=useRef(null);
+  const threeRef=useRef(null);
+  const clickRef=useRef(onCellClick);
+  useEffect(()=>{clickRef.current=onCellClick});
+
+  useEffect(()=>{
+    const mount=mountRef.current;
+    if(!mount||typeof THREE==="undefined")return;
+
+    // ── Scene ──
+    const scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x020617);
+    scene.fog=new THREE.Fog(0x020617,24,42);
+
+    const camera=new THREE.PerspectiveCamera(42,1,0.1,100);
+    const renderer=new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(size,size);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    mount.appendChild(renderer.domElement);
+
+    // ── Lights ──
+    scene.add(new THREE.AmbientLight(0xffffff,0.5));
+    const dir=new THREE.DirectionalLight(0xfff0e0,1.8);
+    dir.position.set(5,14,7);dir.castShadow=true;
+    dir.shadow.mapSize.width=1024;dir.shadow.mapSize.height=1024;
+    scene.add(dir);
+    scene.add(Object.assign(new THREE.PointLight(0x38bdf8,0.8,28),{position:{x:-9,y:9,z:-7,set(x,y,z){this.x=x;this.y=y;this.z=z}}}));
+    const bl=new THREE.PointLight(0x38bdf8,0.8,28);bl.position.set(-9,9,-7);scene.add(bl);
+    const pl=new THREE.PointLight(0xf472b6,0.2,20);pl.position.set(7,5,9);scene.add(pl);
+
+    // ── Ground plane ──
+    const ground=new THREE.Mesh(
+      new THREE.PlaneGeometry(20,20),
+      new THREE.MeshPhongMaterial({color:0x050e1a,shininess:0})
+    );
+    ground.rotation.x=-Math.PI/2;ground.position.y=-0.16;ground.receiveShadow=true;
+    scene.add(ground);
+
+    // ── Board frame (4 bars around perimeter, NOT covering squares) ──
+    // Board squares span x: -4 to 4, z: -4 to 4
+    // Frame sits OUTSIDE that area
+    const frameMat=new THREE.MeshPhongMaterial({color:0x18090200,shininess:15});
+    const fMat=new THREE.MeshPhongMaterial({color:0x1c0d04,shininess:15});
+    // N/S bars (along X): at z = ±4.45
+    [{z:-4.45},{z:4.45}].forEach(({z})=>{
+      const bar=new THREE.Mesh(new THREE.BoxGeometry(9.8,0.3,0.9),fMat);
+      bar.position.set(0,0.0,z);bar.receiveShadow=true;scene.add(bar);
+    });
+    // E/W bars (along Z): at x = ±4.45
+    [{x:-4.45},{x:4.45}].forEach(({x})=>{
+      const bar=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.3,9.8),fMat);
+      bar.position.set(x,0.0,0);bar.receiveShadow=true;scene.add(bar);
+    });
+    // Corner fills
+    [-4.45,4.45].forEach(x=>[-4.45,4.45].forEach(z=>{
+      const c=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.3,0.9),fMat);
+      c.position.set(x,0.0,z);scene.add(c);
+    }));
+
+    // ── Checkerboard squares ──
+    // Squares at y=0, height=0.12 → top at 0.06, bottom at -0.06
+    // Frame at y=0, height=0.3 → top at 0.15 (frame is at ±4.45 in x/z, outside squares)
+    // ✓ No overlap since frame is outside the 8×8 area
+    const sqGeom=new THREE.BoxGeometry(1,0.12,1);
+    const LMAT=new THREE.MeshPhongMaterial({color:0xc8a55e,shininess:30});
+    const DMAT=new THREE.MeshPhongMaterial({color:0x3b1b08,shininess:15});
+    const squareMeshes=[];
+    for(let r=0;r<8;r++){
+      for(let c=0;c<8;c++){
+        const isLight=(r+c)%2===1;
+        const mesh=new THREE.Mesh(sqGeom,isLight?LMAT.clone():DMAT.clone());
+        // c-3.5 centers column c in world: c=0→-3.5, c=7→3.5
+        mesh.position.set(c-3.5,0,r-3.5);
+        mesh.receiveShadow=true;
+        mesh.userData={r,c,isLight,lc:isLight?0xc8a55e:0x3b1b08};
+        squareMeshes.push(mesh);scene.add(mesh);
+      }
+    }
+
+    // ── Camera orbit — theta=0 = white's side (positive Z), phi=38° ──
+    let theta=0,phi=38,isDragging=false,dragMoved=false,px=0,py=0;
+    const R=14;
+    function updateCam(){
+      const t=theta*Math.PI/180,p=phi*Math.PI/180;
+      camera.position.set(R*Math.sin(t)*Math.cos(p),R*Math.sin(p),R*Math.cos(t)*Math.cos(p));
+      camera.lookAt(0,0,0);
+    }
+    updateCam();
+
+    const raycaster=new THREE.Raycaster();
+    function getXY(e){
+      const r=renderer.domElement.getBoundingClientRect();
+      const cx=e.touches?e.touches[0].clientX:e.clientX;
+      const cy=e.touches?e.touches[0].clientY:e.clientY;
+      return{nx:((cx-r.left)/r.width)*2-1,ny:-((cy-r.top)/r.height)*2+1,cx,cy};
+    }
+    function onDown(e){const{cx,cy}=getXY(e);isDragging=true;dragMoved=false;px=cx;py=cy}
+    function onMove(e){
+      if(!isDragging)return;
+      const{cx,cy}=getXY(e);const dx=cx-px,dy=cy-py;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)dragMoved=true;
+      theta-=dx*0.4;phi=Math.max(15,Math.min(72,phi+dy*0.3));
+      px=cx;py=cy;updateCam();
+    }
+    function onUp(e){
+      if(!dragMoved&&isDragging){
+        const src=e.type==="touchend"?e.changedTouches[0]:e;
+        const{nx,ny}=getXY(src);
+        raycaster.setFromCamera({x:nx,y:ny},camera);
+        const hits=raycaster.intersectObjects(squareMeshes);
+        if(hits.length>0){const{r,c}=hits[0].object.userData;clickRef.current(r,c)}
+      }
+      isDragging=false;
+    }
+    const el=renderer.domElement;
+    el.addEventListener("mousedown",onDown);el.addEventListener("mousemove",onMove);el.addEventListener("mouseup",onUp);
+    el.addEventListener("touchstart",onDown,{passive:true});el.addEventListener("touchmove",onMove,{passive:true});el.addEventListener("touchend",onUp);
+
+    let animId;
+    function animate(){animId=requestAnimationFrame(animate);renderer.render(scene,camera)}
+    animate();
+    threeRef.current={scene,squareMeshes};
+    return()=>{
+      cancelAnimationFrame(animId);
+      el.removeEventListener("mousedown",onDown);el.removeEventListener("mousemove",onMove);el.removeEventListener("mouseup",onUp);
+      el.removeEventListener("touchstart",onDown);el.removeEventListener("touchmove",onMove);el.removeEventListener("touchend",onUp);
+      if(mount.contains(renderer.domElement))mount.removeChild(renderer.domElement);
+      renderer.dispose();
+    };
+  },[size]);
+
+  // Update 3D scene when board state changes
+  useEffect(()=>{
+    if(!threeRef.current)return;
+    const{scene,squareMeshes}=threeRef.current;
+    // Remove old pieces
+    const rem=[];scene.children.forEach(ch=>{if(ch.userData.isPiece)rem.push(ch)});
+    rem.forEach(g=>{scene.remove(g);g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&!o.material.shared)o.material.dispose()})});
+    // Update square highlights
+    squareMeshes.forEach(mesh=>{
+      const{r,c,isLight,lc}=mesh.userData;
+      const isSel=selected&&selected[0]===r&&selected[1]===c;
+      const isLegal=legalMoves.some(m=>m.tr===r&&m.tc===c);
+      const isLM=lastMove&&((lastMove.fr===r&&lastMove.fc===c)||(lastMove.tr===r&&lastMove.tc===c));
+      if(isSel){mesh.material.color.setHex(0x1e8fb8);mesh.material.emissive.setHex(0x0a3a50);mesh.position.y=0.04}
+      else if(isLegal){mesh.material.color.setHex(lc);mesh.material.emissive.setHex(0x0c2838);mesh.position.y=0}
+      else if(isLM){mesh.material.color.setHex(isLight?0xd4c855:0x5a5200);mesh.material.emissive.setHex(0x000000);mesh.position.y=0}
+      else{mesh.material.color.setHex(lc);mesh.material.emissive.setHex(0x000000);mesh.position.y=0}
+    });
+    // Add pieces — placed on top of squares (square top = y=0.06, piece base at y=0.06)
+    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+      const p=board[r][c];if(!p)continue;
+      const g=createPieceMesh(p.t,p.c==="w");
+      g.position.set(c-3.5,0.06,r-3.5);
+      g.userData.isPiece=true;scene.add(g);
+    }
+  },[board,selected,legalMoves,lastMove]);
+
+  return <div ref={mountRef} style={{width:size,height:size,borderRadius:10,overflow:"hidden"}}/>;
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOVE MODAL
+// ═══════════════════════════════════════════════════════
+function LoveModal({onClose}){
+  useEffect(()=>{
+    const c=document.getElementById("confetti-container");if(!c)return;
+    const hearts=["💗","💖","🌹","💘","💕","🌸","✨","💝"];
+    const timers=[];
+    for(let i=0;i<30;i++){
+      const t=setTimeout(()=>{
+        const h=document.createElement("div");
+        h.className="love-heart-particle";
+        h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+        const rot=(Math.random()-0.5)*60;
+        h.style.cssText=`left:${Math.random()*100}vw;bottom:-10px;--rot:${rot}deg;animation-delay:${Math.random()*2}s;font-size:${1+Math.random()*1.5}rem;animation-duration:${3+Math.random()*3}s`;
+        c.appendChild(h);
+        setTimeout(()=>{if(c.contains(h))c.removeChild(h)},6000);
+      },i*120);
+      timers.push(t);
+    }
+    return()=>{timers.forEach(clearTimeout)};
+  },[]);
+  return(
+    <div className="love-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="love-card">
+        <div className="love-rose">🌹</div>
+        <div className="love-to">— Para ECO —</div>
+        <div className="love-text">
+          No existe ningún algoritmo en el universo<br/>
+          capaz de <em>calcular</em> lo que siento por ti.<br/><br/>
+          Cada pieza en este tablero fue pensada<br/>
+          para verte <em>sonreír</em>.<br/><br/>
+          Eres mi jaque mate favorito.<br/><br/>
+          <em>Estoy enamorado de ti.</em> 💘
+        </div>
+        <div className="love-sign">— Josulo ♟️ —</div>
+        <button className="love-close" onClick={onClose}>Cerrar con amor 🌹</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  LEARN MODAL
+// ═══════════════════════════════════════════════════════
+const PIECE_INFO=[
+  {symbol:"♙",name:"Peón",short:"Avanza 1 (o 2 desde el inicio). Captura en diagonal.",moves:[[1,1],[1,2],[1,3]],captures:[[0,1],[0,3]]},
+  {symbol:"♖",name:"Torre",short:"Mueve en línea recta cualquier distancia.",moves:[[0,2],[1,2],[3,2],[4,2],[2,0],[2,1],[2,3],[2,4]],captures:[]},
+  {symbol:"♘",name:"Caballo",short:"En L: 2+1 casillas. Salta piezas.",moves:[[0,1],[0,3],[1,0],[1,4],[3,0],[3,4],[4,1],[4,3]],captures:[]},
+  {symbol:"♗",name:"Alfil",short:"Mueve en diagonal. Siempre en el mismo color.",moves:[[0,0],[0,4],[1,1],[1,3],[3,1],[3,3],[4,0],[4,4]],captures:[]},
+  {symbol:"♕",name:"Dama",short:"Combina torre y alfil. La más poderosa.",moves:[[0,2],[1,1],[1,2],[1,3],[2,0],[2,1],[2,3],[2,4],[3,1],[3,2],[3,3],[4,0],[4,2],[4,4]],captures:[]},
+  {symbol:"♔",name:"Rey",short:"1 casilla en cualquier dirección. ¡Protégelo!",moves:[[1,1],[1,2],[1,3],[2,1],[2,3],[3,1],[3,2],[3,3]],captures:[]},
+];
+function MoveDiagram({info}){
+  const cells=[];
+  for(let r=0;r<5;r++)for(let c=0;c<5;c++){
+    const isCenter=r===2&&c===2,isMove=info.moves.some(([mr,mc])=>mr===r&&mc===c),isCap=info.captures.some(([mr,mc])=>mr===r&&mc===c),isLight=(r+c)%2===1;
+    cells.push(<div key={r+"-"+c} className={"pd-sq "+(isCenter?"pd-piece":isCap?"pd-capture":isMove?"pd-move":isLight?"pd-light":"pd-dark")}>{isCenter?info.symbol:""}</div>);
+  }
+  return <div className="piece-diagram">{cells}</div>;
+}
+function LearnModal({onClose}){
+  const[tab,setTab]=useState("piezas");
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal-card">
+        <div className="modal-header"><span className="modal-title">APRENDER A JUGAR</span><button className="modal-close" onClick={onClose}>✕</button></div>
+        <div className="modal-tabs">
+          {[["piezas","♟ Piezas"],["reglas","⚖ Reglas"],["consejos","💡 Consejos"]].map(([k,l])=>(
+            <button key={k} className={"tab-btn"+(tab===k?" active":"")} onClick={()=>setTab(k)}>{l}</button>
+          ))}
+        </div>
+        <div className="modal-body">
+          {tab==="piezas"&&<div className="pieces-grid">{PIECE_INFO.map(info=>(<div className="piece-card" key={info.name}><MoveDiagram info={info}/><div className="piece-info"><h4>{info.symbol} {info.name}</h4><p>{info.short}</p></div></div>))}</div>}
+          {tab==="reglas"&&<>{[["♔ Jaque","El rey está amenazado. Debes protegerlo moviendo el rey, bloqueando el ataque o capturando la pieza."],["♚ Jaque Mate","El rey está en jaque y no puede escapar. ¡Fin de partida!"],["🤝 Tablas","Empate por rey ahogado, triple repetición o insuficiencia de material."],["🏰 Enroque","El rey avanza 2 casillas y la torre salta. Solo si ninguna pieza se ha movido antes."],["⚡ Al Paso","Un peón que avanza 2 puede ser capturado como si solo avanzara 1, solo en el turno siguiente."],["👑 Promoción","Cuando un peón llega al otro extremo, se convierte en cualquier pieza (normalmente dama)."]].map(([t,d])=>(<div className="rule-block" key={t}><div className="rule-title">{t}</div><div className="rule-text">{d}</div></div>))}</>}
+          {tab==="consejos"&&<>{[["Controla el centro","d4, d5, e4, e5 son las casillas clave. Quien las domina, controla el juego."],["Desarrolla tus piezas","Saca caballos y alfiles antes que la dama. Cada pieza necesita un rol activo."],["Protege al rey","Enroca temprano para ponerlo a salvo detrás de los peones."],["No repitas piezas en apertura","Cada movimiento debe desarrollar algo nuevo, no mover la misma pieza dos veces."],["Piensa antes de capturar","¿Vale la pena? Calcula qué ganas y qué pierdes."],["Busca amenazas dobles","Un ataque que amenaza dos cosas a la vez es casi siempre ganador."]].map(([t,d],i)=>(<div className="tip" key={i}><div className="tip-num">{i+1}</div><div className="tip-text"><strong style={{color:"#e2e8f0"}}>{t}.</strong> {d}</div></div>))}</>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  CONFETTI + PHRASES
+// ═══════════════════════════════════════════════════════
+function launchConfetti(){
+  const c=document.getElementById("confetti-container");if(!c)return;c.innerHTML="";
+  const cols=["#38bdf8","#f472b6","#facc15","#4ade80","#c084fc","#fb923c"];
+  for(let i=0;i<110;i++){const p=document.createElement("div");const sz=Math.random()*8+4;p.style.cssText=`position:fixed;left:${Math.random()*100}vw;top:-20px;width:${sz}px;height:${sz*1.5}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?"50%":"2px"};animation:confettiFall ${Math.random()*2+2}s ease-in forwards;animation-delay:${Math.random()*.8}s;opacity:.9;z-index:9999;pointer-events:none`;c.appendChild(p)}
+  setTimeout(()=>{c.innerHTML=""},5000);
+}
+const J_THINK=["Josulo piensa... en ti 💭","Analizando el tablero... y tu sonrisa 👀","Calculando variantes... y excusas para hablar contigo","Consultando el corazón... digo, el motor 🤖"];
+const J_AFTER=["Interesante jugada, ECO... como tu mirada ♟️","Josulo contraataca con elegancia 😏","¿Viste eso? Puro talento natural 💅","Mi mejor movimiento fue encontrarte en este tablero","Jaque... a tu corazón 💘"];
+const J_CHECK=["¡Jaque! Pero solo quiero tu atención 👑","¡Jaque! Mi rey siempre serás tú, ECO"];
+const J_CAP=["Capturé tu pieza... pero nunca tu libertad 🌹","¿Me perdonas la captura con un café? ☕"];
+const J_CHAT=["Me encanta cómo piensas, ECO 🥰","¿Me estás distrayendo? Funciona bien 😏","Cada mensaje tuyo vale más que una dama 👑"];
+const DIFF_DATA=[{icon:"🌹",name:"Romántico"},{icon:"😊",name:"Casual"},{icon:"♟️",name:"Jugador"},{icon:"🧠",name:"Avanzado"},{icon:"👑",name:"Maestro"}];
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+
+// ═══════════════════════════════════════════════════════
+//  MAIN APP
+// ═══════════════════════════════════════════════════════
+function App(){
+  const[board,setBoard]=useState(initialBoard);
+  const[turn,setTurn]=useState("w");
+  const[castling,setCastling]=useState({wK:true,wQ:true,bK:true,bQ:true});
+  const[enPassant,setEnPassant]=useState(null);
+  const[lastMove,setLastMove]=useState(null);
+  const[gameOver,setGameOver]=useState(null);
+  const[selected,setSelected]=useState(null);
+  const[legalMoves,setLegalMoves]=useState([]);
+  const[playerName,setPlayerName]=useState("");
+  const[isStarted,setIsStarted]=useState(false);
+  const[isJosulo,setIsJosulo]=useState(false);
+  const[messages,setMessages]=useState([]);
+  const[inputMsg,setInputMsg]=useState("");
+  const[status,setStatus]=useState("");
+  const[timerEco,setTimerEco]=useState(600);
+  const[timerJosulo,setTimerJosulo]=useState(600);
+  const[moveCount,setMoveCount]=useState(0);
+  const[difficulty,setDifficulty]=useState(2);
+  const[viewMode,setViewMode]=useState("2d");
+  const[showLearn,setShowLearn]=useState(false);
+  const[showLove,setShowLove]=useState(false);
+  const chatRef=useRef(null);
+  useEffect(()=>{if(chatRef.current)chatRef.current.scrollTop=chatRef.current.scrollHeight},[messages]);
+
+  useEffect(()=>{
+    if(!isStarted||gameOver)return;
+    const iv=setInterval(()=>{
+      if(turn==="w")setTimerEco(t=>{if(t<=1){setGameOver({type:"timeout",winner:"Josulo"});return 0}return t-1});
+      else setTimerJosulo(t=>{if(t<=1){setGameOver({type:"timeout",winner:"ECO"});return 0}return t-1});
+    },1000);
+    return()=>clearInterval(iv);
+  },[isStarted,turn,gameOver]);
+
+  const fmt=t=>`${Math.floor(t/60)}:${(t%60).toString().padStart(2,"0")}`;
+
+  const execMove=useCallback((move,cb,cc,ce,ct)=>{
+    const nb=applyMove(cb,move);const nc={...cc};const piece=cb[move.fr][move.fc];
+    if(piece.t==="k"){nc[piece.c+"K"]=false;nc[piece.c+"Q"]=false}
+    if(piece.t==="r"){if(move.fc===0)nc[piece.c+"Q"]=false;if(move.fc===7)nc[piece.c+"K"]=false}
+    if(move.tr===0&&move.tc===0)nc.bQ=false;if(move.tr===0&&move.tc===7)nc.bK=false;
+    if(move.tr===7&&move.tc===0)nc.wQ=false;if(move.tr===7&&move.tc===7)nc.wK=false;
+    let ne=null;if(piece.t==="p"&&Math.abs(move.tr-move.fr)===2)ne=[(move.fr+move.tr)/2,move.fc];
+    const nt=ct==="w"?"b":"w";const nl=getLegalMoves(nb,nt,nc,ne);
+    setBoard(nb);setCastling(nc);setEnPassant(ne);setTurn(nt);setLastMove(move);setSelected(null);setLegalMoves([]);setMoveCount(m=>m+1);
+    if(nl.length===0){if(isInCheck(nb,nt)){const w=nt==="w"?"Josulo":"ECO";setGameOver({type:"checkmate",winner:w});launchConfetti()}else setGameOver({type:"stalemate"})}
+    else if(isInCheck(nb,nt))setStatus(nt==="w"?"¡Jaque! Tu turno, ECO 👑":"¡Josulo en jaque!");
+    return{nb,nc,ne,nt,captured:!!cb[move.tr][move.tc]||move.ep,inCheck:isInCheck(nb,nt)};
+  },[]);
+
+  const handleCellClick=useCallback((r,c)=>{
+    if(gameOver||turn!=="w")return;const piece=board[r][c];
+    if(selected){
+      const move=legalMoves.find(m=>m.tr===r&&m.tc===c);
+      if(move){execMove(move,board,castling,enPassant,turn);return}
+      if(piece&&piece.c==="w"){setSelected([r,c]);setLegalMoves(getLegalMoves(board,"w",castling,enPassant).filter(m=>m.fr===r&&m.fc===c));return}
+      setSelected(null);setLegalMoves([]);
+    }else{if(piece&&piece.c==="w"){setSelected([r,c]);setLegalMoves(getLegalMoves(board,"w",castling,enPassant).filter(m=>m.fr===r&&m.fc===c))}}
+  },[board,selected,legalMoves,turn,castling,enPassant,gameOver,execMove]);
+
+  useEffect(()=>{
+    if(!isJosulo||turn!=="b"||gameOver)return;
+    const delay=difficulty<=2?Math.floor(Math.random()*1200)+900:Math.floor(Math.random()*800)+1600;
+    const to=setTimeout(()=>{
+      const move=getBestMove(board,"b",castling,enPassant,difficulty);if(!move)return;
+      const res=execMove(move,board,castling,enPassant,turn);
+      let phrase;if(res.inCheck)phrase=rnd(J_CHECK);else if(res.captured)phrase=rnd(J_CAP);else phrase=rnd(J_AFTER);
+      setMessages(ms=>[...ms,{sender:"Josulo",text:phrase}]);setStatus("Tu turno, ECO ♟️");
+    },delay);
+    return()=>clearTimeout(to);
+  },[turn,isJosulo,gameOver,board,castling,enPassant,difficulty,execMove]);
+
+  const handleStart=()=>{
+    const n=playerName.trim().toLowerCase();
+    if(n==="josulo chess"||n==="josulo"){setIsJosulo(true);setMessages([{sender:"Sistema",text:"🎮 Modo Josulo activado."},{sender:"Josulo",text:"Hola ECO... ¿lista para perder? ...el miedo, claro 😏"}])}
+    else setMessages([{sender:"Sistema",text:`Bienvenid@ al tablero, ${playerName||"ECO"} · ${DIFF_DATA[difficulty-1].icon} ${DIFF_DATA[difficulty-1].name}`}]);
+    setStatus("Tu turno, ECO ♟️");setIsStarted(true);
+  };
+  const handleRestart=()=>{
+    setBoard(initialBoard());setTurn("w");setCastling({wK:true,wQ:true,bK:true,bQ:true});
+    setEnPassant(null);setLastMove(null);setGameOver(null);setSelected(null);setLegalMoves([]);
+    setTimerEco(600);setTimerJosulo(600);setMoveCount(0);setStatus("Tu turno, ECO ♟️");
+    setMessages(ms=>[...ms,{sender:"Sistema",text:"♻️ Nueva partida. ¡Adelante!"}]);
+    if(isJosulo)setTimeout(()=>setMessages(ms=>[...ms,{sender:"Josulo",text:"¿Otra ronda? No me canso de jugar contigo 😏"}]),400);
+  };
+
+  const files=["a","b","c","d","e","f","g","h"],ranks=["8","7","6","5","4","3","2","1"];
+  const bSize=Math.min(480,typeof window!=="undefined"?window.innerWidth-(window.innerWidth>900?360:30):480);
+  const cellSize=bSize/8;
+
+  // ── LOGIN ──
+  if(!isStarted)return(
+    <div className="login-screen">
+      {showLearn&&<LearnModal onClose={()=>setShowLearn(false)}/>}
+      {showLove&&<LoveModal onClose={()=>setShowLove(false)}/>}
+      <div className="login-card">
+        <div className="logo-3d-wrap"><span className="logo-eco">ECO</span></div>
+        <p className="tagline">Estrategia & Amor</p>
+        <div className="version-badge">v 3.0</div>
+        <div className="section-label">Tu nombre</div>
+        <input className="login-input" type="text" placeholder="¿Cómo te llamas?" value={playerName}
+          onChange={e=>setPlayerName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleStart()}/>
+        <div className="section-label" style={{marginTop:12}}>Dificultad</div>
+        <div className="diff-row">
+          {DIFF_DATA.map((d,i)=>(
+            <div key={i} className={"diff-card"+(difficulty===i+1?" active":"")} onClick={()=>setDifficulty(i+1)}>
+              <div className="diff-icon">{d.icon}</div>
+              <div className="diff-name">{d.name}</div>
+            </div>
+          ))}
+        </div>
+        <button className="login-btn" onClick={handleStart}>Entrar al Tablero →</button>
+        <button className="eco-love-btn" onClick={()=>setShowLove(true)}>
+          ✉ ECO — pulsa aquí
+        </button>
+        <div className="hint-row">
+          <span className="hint">Escribe "josulo" para modo especial 🤫</span>
+          <span className="learn-link" onClick={()=>setShowLearn(true)}>📖 Aprender</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── GAME ──
+  return(
+    <div className="app-container">
+      {showLearn&&<LearnModal onClose={()=>setShowLearn(false)}/>}
+      {showLove&&<LoveModal onClose={()=>setShowLove(false)}/>}
+      <div className="layout">
+        <div className="board-section">
+          <div className={`timer timer-josulo${turn==="b"&&!gameOver?" timer-active":""}`}>{fmt(timerJosulo)} <span className="timer-label">JOSULO</span></div>
+          <div className="board-controls">
+            <div className="view-toggle">
+              <button className={"view-btn"+(viewMode==="2d"?" active":"")} onClick={()=>setViewMode("2d")}>2D</button>
+              <button className={"view-btn"+(viewMode==="3d"?" active":"")} onClick={()=>setViewMode("3d")}>3D</button>
+            </div>
+            <div className="diff-badge">{DIFF_DATA[difficulty-1].icon} {DIFF_DATA[difficulty-1].name}</div>
+            <button className="learn-btn-game" onClick={()=>setShowLearn(true)}>📖</button>
+            <button className="eco-btn-game" onClick={()=>setShowLove(true)}>ECO ♥</button>
+          </div>
+          <div className="status-bar">{status}</div>
+
+          {viewMode==="2d"?(
+            <div className="board-outer">
+              <div className="board-grid" style={{width:bSize,height:bSize}}>
+                {board.map((row,r)=>row.map((cell,c)=>{
+                  const isLight=(r+c)%2===1;const isSel=selected&&selected[0]===r&&selected[1]===c;
+                  const isLegal=legalMoves.some(m=>m.tr===r&&m.tc===c);const isCapL=isLegal&&cell!==null;
+                  const isLM=lastMove&&((lastMove.fr===r&&lastMove.fc===c)||(lastMove.tr===r&&lastMove.tc===c));
+                  const pk=cell?cell.c+cell.t.toUpperCase():null;
+                  let cls="cell "+(isLight?"cell-light":"cell-dark");
+                  if(isSel)cls+=" cell-selected";else if(isLM)cls+=" "+(isLight?"cell-lastmove-light":"cell-lastmove-dark");
+                  return(
+                    <div key={r+"-"+c} className={cls} style={{width:cellSize,height:cellSize,fontSize:cellSize*.7}} onClick={()=>handleCellClick(r,c)}>
+                      {c===0&&<span className="coord coord-rank">{ranks[r]}</span>}
+                      {r===7&&<span className="coord coord-file">{files[c]}</span>}
+                      {isLegal&&!isCapL&&<div className="legal-dot"/>}
+                      {isCapL&&<div className="legal-capture"/>}
+                      {cell&&<span className="piece">{PIECES[pk]}</span>}
+                    </div>
+                  );
+                }))}
+              </div>
+            </div>
+          ):(
+            <div className="board-3d-wrap" style={{width:bSize,height:bSize}}>
+              <Board3D board={board} selected={selected} legalMoves={legalMoves} lastMove={lastMove} onCellClick={handleCellClick} size={bSize}/>
+            </div>
+          )}
+
+          <div className={`timer timer-eco${turn==="w"&&!gameOver?" timer-active":""}`}>{fmt(timerEco)} <span className="timer-label">ECO</span></div>
+        </div>
+
+        <div className="chat-section">
+          <div className="chat-header">MENSAJES</div>
+          <div className="chat-messages" ref={chatRef}>
+            {messages.map((m,i)=>{const sc=m.sender.toLowerCase();return(
+              <div key={i} className={`msg msg-${sc==="josulo"?"josulo":sc==="eco"?"eco":"sistema"}`}>
+                <div className={`msg-sender msg-sender-${sc==="josulo"?"josulo":sc==="eco"?"eco":"sistema"}`}>{m.sender}</div>
+                {m.text}
+              </div>
+            )})}
+          </div>
+          <form className="chat-input-area" onSubmit={e=>{e.preventDefault();if(!inputMsg.trim())return;setMessages(ms=>[...ms,{sender:"ECO",text:inputMsg}]);setInputMsg("");if(isJosulo)setTimeout(()=>setMessages(ms=>[...ms,{sender:"Josulo",text:rnd(J_CHAT)}]),1300)}}>
+            <input className="chat-input" value={inputMsg} onChange={e=>setInputMsg(e.target.value)} placeholder="Escribe aquí..."/>
+            <button type="submit" className="send-btn">→</button>
+          </form>
+        </div>
+      </div>
+
+      {gameOver&&(
+        <div className="end-overlay">
+          <div className="end-card">
+            <div style={{fontSize:"3rem",marginBottom:12}}>{gameOver.type==="checkmate"?"♔":gameOver.type==="timeout"?"⏱️":"🤝"}</div>
+            <h2>{gameOver.type==="checkmate"?"¡Jaque Mate!":gameOver.type==="timeout"?"¡Tiempo agotado!":"Tablas"}</h2>
+            <p className="sub">{gameOver.winner?(gameOver.winner==="ECO"?"Has ganado... mi corazón 💘":isJosulo?"Josulo gana... pero tú ganas su admiración":"Las negras ganan"):"Empate de estrategas"}</p>
+            <p className="stats">{moveCount} movimientos · {fmt(600-timerEco)} jugados · {DIFF_DATA[difficulty-1].icon} {DIFF_DATA[difficulty-1].name}</p>
+            <button className="restart-btn" onClick={handleRestart}>Revancha ♟️</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
