@@ -4,804 +4,370 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>ECO CHESS V3.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg-deep: #06080d;
-  --bg-surface: #0c1019;
-  --bg-card: #111827;
-  --accent-cyan: #00f0ff;
-  --accent-pink: #ff2d8a;
-  --accent-gold: #ffd700;
-  --text-primary: #e8eaf0;
-  --text-muted: #6b7394;
-  --board-light: #d4a84b;
-  --board-dark: #6b3a1f;
-  --board-light-3d: #c49a3e;
-  --board-dark-3d: #5a3018;
-  --glow-cyan: 0 0 20px rgba(0,240,255,0.3);
-  --glow-pink: 0 0 20px rgba(255,45,138,0.3);
+  --bg: #05070c;
+  --cyan: #00f0ff;
+  --pink: #ff2d8a;
+  --gold: #ffd700;
+  --txt: #e8eaf0;
+  --muted: #5a6384;
 }
 
 html, body {
   height: 100%;
-  background: var(--bg-deep);
-  color: var(--text-primary);
+  background: var(--bg);
+  color: var(--txt);
   font-family: 'Rajdhani', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100dvh;
-  position: relative;
+body { display: flex; flex-direction: column; align-items: center; min-height: 100dvh; }
+
+.app { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 4px; padding-bottom: 10px; animation: fadeIn 0.8s; }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* HEADER */
+.header { width: 100%; max-width: 500px; padding: 14px 16px 4px; z-index: 20; }
+
+.brand { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px; }
+
+.crown { font-size: 22px; filter: drop-shadow(0 0 8px rgba(0,240,255,0.6)); animation: crownF 3s ease-in-out infinite; }
+@keyframes crownF { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+.logo {
+  font-family: 'Orbitron', monospace; font-weight: 900; font-size: 32px; letter-spacing: 8px;
+  background: linear-gradient(90deg, var(--cyan), #fff, var(--pink));
+  background-size: 300% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
 }
+@keyframes shine { 0% { background-position: 0%; } 100% { background-position: 300%; } }
 
-/* === BACKGROUND ATMOSPHERE === */
-body::before {
-  content: '';
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(ellipse at 20% 20%, rgba(0,240,255,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(255,45,138,0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(255,215,0,0.02) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: 0;
-  animation: atmosphereShift 20s ease-in-out infinite alternate;
+.sub { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 5px; color: var(--muted); text-align: center; text-transform: uppercase; }
+
+.hline { width: 60%; height: 1px; margin: 8px auto; background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), transparent); opacity: 0.5; }
+
+/* CONTROLS */
+.ctrls { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; z-index: 20; }
+
+.cb {
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1px;
+  padding: 5px 12px; border: 1px solid rgba(255,255,255,0.07); border-radius: 6px;
+  background: rgba(255,255,255,0.03); color: var(--muted); cursor: pointer; transition: all 0.3s; text-transform: uppercase;
 }
+.cb.on { background: rgba(0,240,255,0.1); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px rgba(0,240,255,0.2); }
+.cb.eco { border-color: rgba(255,45,138,0.3); color: var(--pink); }
 
-@keyframes atmosphereShift {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(-2%, 1%) rotate(2deg); }
+/* PLAYERS */
+.pbar {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 92%; max-width: 440px; padding: 6px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); z-index: 20;
 }
-
-/* === HEADER === */
-.header {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  padding: 16px 20px 10px;
-  z-index: 10;
+.pi { display: flex; align-items: center; gap: 8px; }
+.pa {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; font-family: 'Orbitron', monospace;
 }
-
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
+.tp .pa { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.08)); border: 1px solid rgba(255,215,0,0.25); color: var(--gold); }
+.bp .pa { background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(0,200,255,0.08)); border: 1px solid rgba(0,240,255,0.25); color: var(--cyan); }
+.pn { font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.tp .pn { color: var(--gold); }
+.bp .pn { color: var(--cyan); }
+.tm {
+  font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700;
+  letter-spacing: 2px; padding: 3px 10px; border-radius: 6px;
 }
+.tp .tm { color: var(--gold); background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.12); }
+.bp .tm { color: var(--cyan); background: rgba(0,240,255,0.05); border: 1px solid rgba(0,240,255,0.12); text-shadow: 0 0 8px rgba(0,240,255,0.4); }
 
-.logo-mark {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.turn { text-align: center; font-size: 13px; letter-spacing: 2px; color: var(--cyan); padding: 4px 0; z-index: 20; animation: tp 2s ease-in-out infinite; }
+@keyframes tp { 0%,100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 10px rgba(0,240,255,0.4); } }
+
+#chessCanvas { width: 100% !important; max-width: 460px; aspect-ratio: 1 / 0.8; display: block; z-index: 10; touch-action: none; }
+
+.hint { text-align: center; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--muted); opacity: 0.5; z-index: 20; }
+
+.mp {
+  width: 92%; max-width: 440px; padding: 8px 14px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px; z-index: 20; margin-bottom: 12px;
 }
+.mt { font-family: 'Orbitron', monospace; font-size: 10px; letter-spacing: 4px; color: var(--muted); text-align: center; margin-bottom: 6px; }
+.ms { padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.02); border-left: 2px solid var(--cyan); }
+.ml { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+.mx { font-size: 12px; }
 
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  position: relative;
-}
-
-.logo-icon svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 8px rgba(0,240,255,0.5));
-}
-
-.logo-text {
-  font-family: 'Orbitron', monospace;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 6px;
-  background: linear-gradient(135deg, var(--accent-cyan) 0%, #00d4ff 30%, #fff 50%, var(--accent-pink) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shineText 4s linear infinite;
-  text-shadow: none;
-}
-
-@keyframes shineText {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-
-.logo-version {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  color: var(--accent-cyan);
-  letter-spacing: 2px;
-  opacity: 0.7;
-  position: absolute;
-  bottom: -6px;
-  right: 0;
-}
-
-.subtitle {
-  text-align: center;
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-
-/* === CONTROLS BAR === */
-.controls-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
-.ctrl-btn {
-  font-family: 'Space Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 1px;
-  padding: 6px 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 6px;
-  background: rgba(255,255,255,0.03);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  user-select: none;
-  text-transform: uppercase;
-}
-
-.ctrl-btn:hover { border-color: rgba(0,240,255,0.3); color: var(--text-primary); }
-
-.ctrl-btn.active {
-  background: rgba(0,240,255,0.08);
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan);
-  box-shadow: var(--glow-cyan);
-}
-
-.ctrl-btn.eco-heart {
-  border-color: rgba(255,45,138,0.4);
-  color: var(--accent-pink);
-  background: rgba(255,45,138,0.06);
-}
-
-.ctrl-btn.eco-heart::after { content: ' ♥'; }
-
-/* === PLAYER BARS === */
-.player-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 420px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  margin: 6px auto;
-  z-index: 10;
-}
-
-.player-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.player-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.player-bar.top .player-avatar {
-  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.1));
-  border: 1px solid rgba(255,215,0,0.3);
-  color: var(--accent-gold);
-}
-
-.player-bar.bottom .player-avatar {
-  background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(0,200,255,0.1));
-  border: 1px solid rgba(0,240,255,0.3);
-  color: var(--accent-cyan);
-}
-
-.player-name {
-  font-family: 'Orbitron', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-
-.player-bar.top .player-name { color: var(--accent-gold); }
-.player-bar.bottom .player-name { color: var(--accent-cyan); }
-
-.timer {
-  font-family: 'Orbitron', monospace;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  padding: 4px 12px;
-  border-radius: 8px;
-}
-
-.player-bar.top .timer {
-  color: var(--accent-gold);
-  background: rgba(255,215,0,0.06);
-  border: 1px solid rgba(255,215,0,0.15);
-}
-
-.player-bar.bottom .timer {
-  color: var(--accent-cyan);
-  background: rgba(0,240,255,0.06);
-  border: 1px solid rgba(0,240,255,0.15);
-  text-shadow: 0 0 10px rgba(0,240,255,0.4);
-}
-
-/* === TURN INDICATOR === */
-.turn-indicator {
-  text-align: center;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 2px;
-  color: var(--accent-cyan);
-  margin: 6px 0;
-  z-index: 10;
-  animation: pulseTurn 2s ease-in-out infinite;
-}
-
-@keyframes pulseTurn {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; text-shadow: 0 0 12px rgba(0,240,255,0.5); }
-}
-
-.turn-indicator .piece-icon { font-style: normal; }
-
-/* === 3D BOARD CONTAINER === */
-.board-scene {
-  perspective: 800px;
-  perspective-origin: 50% 35%;
-  width: 100%;
-  max-width: 420px;
-  margin: 8px auto;
-  z-index: 5;
-}
-
-.board-wrapper {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%;
-  transform: rotateX(45deg) rotateZ(0deg);
-  transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.board-wrapper.flat {
-  transform: rotateX(0deg) rotateZ(0deg);
-}
-
-/* Board base / table surface */
-.board-base {
-  position: absolute;
-  top: -4%;
-  left: -4%;
-  width: 108%;
-  height: 108%;
-  background: linear-gradient(145deg, #1a1208 0%, #0d0a04 100%);
-  border-radius: 8px;
-  transform: translateZ(-20px);
-  box-shadow: 
-    0 30px 60px rgba(0,0,0,0.8),
-    0 10px 30px rgba(0,0,0,0.6),
-    inset 0 1px 0 rgba(255,215,0,0.05);
-  border: 1px solid rgba(255,215,0,0.08);
-}
-
-/* Board edge (depth illusion) */
-.board-edge {
-  position: absolute;
-  top: -2%;
-  left: -2%;
-  width: 104%;
-  height: 104%;
-  background: linear-gradient(180deg, #2a1a08 0%, #1a0f03 100%);
-  border-radius: 6px;
-  transform: translateZ(-10px);
-  border: 1px solid rgba(255,215,0,0.06);
-}
-
-.board-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
-  border-radius: 4px;
-  overflow: hidden;
-  transform: translateZ(0px);
-  transform-style: preserve-3d;
-  box-shadow: 
-    0 0 0 3px rgba(255,215,0,0.1),
-    0 0 30px rgba(0,0,0,0.5);
-}
-
-/* === SQUARES === */
-.square {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-style: preserve-3d;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.square.light { background: var(--board-light); }
-.square.dark { background: var(--board-dark); }
-
-.square::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none;
-  transition: background 0.2s;
-}
-
-.square:hover::after {
-  background: rgba(0,240,255,0.15);
-}
-
-.square.selected::after {
-  background: rgba(0,240,255,0.25);
-  box-shadow: inset 0 0 10px rgba(0,240,255,0.3);
-}
-
-.square.possible-move::after {
-  background: radial-gradient(circle at center, rgba(0,240,255,0.35) 20%, transparent 22%);
-}
-
-/* Coordinate labels */
-.square .coord {
-  position: absolute;
-  font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  opacity: 0.4;
-  pointer-events: none;
-  color: inherit;
-}
-
-.square.light .coord { color: var(--board-dark); }
-.square.dark .coord { color: var(--board-light); }
-.square .coord.file { bottom: 2px; right: 3px; }
-.square .coord.rank { top: 2px; left: 3px; }
-
-/* === PIECES === */
-.piece {
-  font-size: min(5.5vw, 38px);
-  line-height: 1;
-  transform: translateZ(12px);
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-  transition: transform 0.2s, filter 0.2s;
-  user-select: none;
-  cursor: grab;
-  z-index: 2;
-}
-
-.piece:hover {
-  transform: translateZ(20px) scale(1.1);
-  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7));
-}
-
-.piece.white { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 3px rgba(255,255,255,0.2)); }
-.piece.black { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-
-/* === BOARD REFLECTION === */
-.board-reflection {
-  width: 90%;
-  max-width: 380px;
-  height: 30px;
-  margin: -5px auto 0;
-  background: radial-gradient(ellipse at center, rgba(0,240,255,0.05) 0%, transparent 70%);
-  filter: blur(10px);
-  z-index: 1;
-}
-
-/* === MESSAGES === */
-.messages-panel {
-  width: 100%;
-  max-width: 420px;
-  margin: 10px auto;
-  padding: 10px 16px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 10px;
-  z-index: 10;
-}
-
-.messages-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  letter-spacing: 4px;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.message {
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.03);
-  border-left: 2px solid var(--accent-cyan);
-  margin-bottom: 6px;
-}
-
-.message .msg-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.message .msg-text {
-  font-size: 13px;
-  color: var(--text-primary);
-}
-
-/* === SCAN LINE EFFECT === */
-.scanline {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 100;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.02) 2px,
-    rgba(0,0,0,0.02) 4px
-  );
-}
-
-/* === PARTICLES === */
-.particles {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: var(--accent-cyan);
-  border-radius: 50%;
-  opacity: 0;
-  animation: floatParticle 8s linear infinite;
-}
-
-@keyframes floatParticle {
-  0% { opacity: 0; transform: translateY(100vh) scale(0); }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.1; }
-  100% { opacity: 0; transform: translateY(-10vh) scale(1); }
-}
-
-/* === HEADER DECORATIVE LINE === */
-.header-line {
-  width: 80%;
-  max-width: 300px;
-  height: 1px;
-  margin: 0 auto 10px;
-  background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-  opacity: 0.3;
-}
-
-/* === LOADING ANIMATION === */
-.app-container {
-  animation: fadeInApp 1.2s ease-out;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: 20px;
-}
-
-@keyframes fadeInApp {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 400px) {
-  .logo-text { font-size: 22px; letter-spacing: 4px; }
-  .timer { font-size: 18px; }
-  .player-name { font-size: 11px; }
-  .piece { font-size: 5vw; }
-}
+@media (max-width: 400px) { .logo { font-size: 24px; letter-spacing: 5px; } .tm { font-size: 17px; } }
 </style>
 </head>
 <body>
-
-<div class="scanline"></div>
-
-<div class="particles" id="particles"></div>
-
-<div class="app-container">
-
-  <!-- HEADER -->
+<div class="app">
   <header class="header">
-    <div class="header-top">
-      <div class="logo-mark">
-        <div class="logo-icon">
-          <svg viewBox="0 0 40 40" fill="none">
-            <path d="M20 4L20 8M20 32L20 36M4 20L8 20M32 20L36 20" stroke="rgba(0,240,255,0.3)" stroke-width="1"/>
-            <circle cx="20" cy="20" r="14" stroke="url(#logoGrad)" stroke-width="1.5" fill="none"/>
-            <text x="20" y="25" text-anchor="middle" font-size="16" fill="url(#logoGrad)">♚</text>
-            <defs>
-              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00f0ff"/>
-                <stop offset="100%" stop-color="#ff2d8a"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        <div>
-          <span class="logo-text">ECO</span>
-          <span class="logo-version">CHESS V3.0</span>
-        </div>
-      </div>
-    </div>
-    <div class="subtitle">The Experience</div>
-    <div class="header-line"></div>
+    <div class="brand"><span class="crown">♛</span><span class="logo">ECO</span></div>
+    <div class="sub">chess experience · v3.0</div>
+    <div class="hline"></div>
   </header>
 
-  <!-- CONTROLS -->
-  <div class="controls-bar">
-    <button class="ctrl-btn" id="btn2d" onclick="setView('2d')">2D</button>
-    <button class="ctrl-btn active" id="btn3d" onclick="setView('3d')">3D</button>
-    <button class="ctrl-btn">😊 Casual</button>
-    <button class="ctrl-btn">📖</button>
-    <button class="ctrl-btn eco-heart">ECO</button>
+  <div class="ctrls">
+    <button class="cb" id="b2d" onclick="togView(false)">2D</button>
+    <button class="cb on" id="b3d" onclick="togView(true)">3D</button>
+    <button class="cb">😊 Casual</button>
+    <button class="cb">📖</button>
+    <button class="cb eco">ECO ♥</button>
   </div>
 
-  <!-- TOP PLAYER -->
-  <div class="player-bar top">
-    <div class="player-info">
-      <div class="player-avatar">J</div>
-      <span class="player-name">Josulo</span>
-    </div>
-    <div class="timer" id="timerTop">10:00</div>
+  <div class="pbar tp">
+    <div class="pi"><div class="pa">J</div><span class="pn">Josulo</span></div>
+    <div class="tm" id="tT">10:00</div>
   </div>
 
-  <!-- TURN INDICATOR -->
-  <div class="turn-indicator">
-    Tu turno, ECO <span class="piece-icon">♟</span>
+  <div class="turn">Tu turno, ECO ♟</div>
+  <canvas id="chessCanvas"></canvas>
+  <div class="hint">↻ ARRASTRA PARA ROTAR</div>
+
+  <div class="pbar bp">
+    <div class="pi"><div class="pa">E</div><span class="pn">ECO</span></div>
+    <div class="tm" id="tB">9:47</div>
   </div>
 
-  <!-- 3D BOARD -->
-  <div class="board-scene">
-    <div class="board-wrapper" id="boardWrapper">
-      <div class="board-base"></div>
-      <div class="board-edge"></div>
-      <div class="board-grid" id="boardGrid"></div>
-    </div>
+  <div class="mp">
+    <div class="mt">MENSAJES</div>
+    <div class="ms"><div class="ml">Sistema</div><div class="mx">Bienvenid@ al tablero · 😊 Casual</div></div>
   </div>
-
-  <div class="board-reflection"></div>
-
-  <!-- BOTTOM PLAYER -->
-  <div class="player-bar bottom">
-    <div class="player-info">
-      <div class="player-avatar">E</div>
-      <span class="player-name">ECO</span>
-    </div>
-    <div class="timer" id="timerBottom">9:47</div>
-  </div>
-
-  <!-- MESSAGES -->
-  <div class="messages-panel">
-    <div class="messages-title">MENSAJES</div>
-    <div class="message">
-      <div class="msg-label">Sistema</div>
-      <div class="msg-text">Bienvenid@ al tablero · 😊 Casual</div>
-    </div>
-  </div>
-
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// Piece Unicode mapping
-const PIECES = {
-  'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-  'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-};
+// ============================================================
+//  ECO CHESS 3D — THREE.JS ENGINE
+// ============================================================
 
-const INITIAL_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
-const FILES = 'abcdefgh';
+let scene, camera, renderer, boardGroup, piecesGroup;
+let isDrag = false, prev = {x:0,y:0};
+let camA = Math.PI * 0.75, camP = Math.PI * 0.3, camR = 16;
+let tA = camA, tP = camP;
 
-let selectedSquare = null;
+const canvas = document.getElementById('chessCanvas');
+const SQ = 1.05;
+const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
-function parseFEN(fen) {
-  const board = [];
-  const rows = fen.split('/');
-  for (let r = 0; r < 8; r++) {
-    board[r] = [];
-    let col = 0;
-    for (const ch of rows[r]) {
-      if (ch >= '1' && ch <= '8') {
-        for (let i = 0; i < parseInt(ch); i++) { board[r][col++] = null; }
-      } else {
-        board[r][col++] = ch;
-      }
-    }
-  }
-  return board;
+// Piece lathe profiles (x=radius, y=height)
+function mkProfile(type) {
+  const P = {
+    pawn: [[0,.0],[.34,.0],[.36,.04],[.30,.12],[.24,.22],[.20,.38],[.26,.42],[.26,.48],[.18,.58],[.14,.72],[.10,.80],[.14,.84],[.10,.94],[.06,1.0],[0,1.02]],
+    rook: [[0,.0],[.36,.0],[.36,.06],[.28,.10],[.24,.15],[.24,.58],[.30,.62],[.30,.72],[.18,.76],[.18,.88],[.30,.88],[.30,.98],[.22,.98],[.22,.92],[.14,.92],[.14,.98],[0,.98]],
+    knight: [[0,.0],[.36,.0],[.36,.06],[.28,.10],[.24,.20],[.20,.40],[.18,.55],[.22,.70],[.26,.82],[.22,.95],[.16,1.08],[.10,1.16],[.06,1.20],[0,1.22]],
+    bishop: [[0,.0],[.34,.0],[.36,.05],[.28,.10],[.22,.25],[.20,.42],[.22,.55],[.18,.70],[.14,.85],[.10,.98],[.12,1.02],[.08,1.12],[.04,1.22],[.06,1.26],[0,1.30]],
+    queen: [[0,.0],[.36,.0],[.38,.05],[.30,.10],[.24,.22],[.22,.40],[.24,.58],[.20,.75],[.16,.90],[.20,.96],[.14,1.08],[.18,1.14],[.10,1.26],[.14,1.32],[.06,1.42],[0,1.46]],
+    king: [[0,.0],[.36,.0],[.38,.05],[.30,.10],[.24,.22],[.22,.40],[.24,.58],[.20,.75],[.16,.92],[.14,1.04],[.10,1.16],[.06,1.28],[.04,1.36],[.10,1.36],[.10,1.46],[.04,1.46],[.04,1.58],[.10,1.58],[.10,1.62],[.04,1.62],[.04,1.72],[0,1.72]]
+  };
+  return (P[type]||P.pawn).map(p => new THREE.Vector2(p[0], p[1]));
 }
 
-function renderBoard(fen) {
-  const grid = document.getElementById('boardGrid');
-  grid.innerHTML = '';
-  const board = parseFEN(fen);
+const PMAP = { P:'pawn',R:'rook',N:'knight',B:'bishop',Q:'queen',K:'king',
+               p:'pawn',r:'rook',n:'knight',b:'bishop',q:'queen',k:'king' };
+
+function init() {
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050710, 0.018);
+
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  camera = new THREE.PerspectiveCamera(35, w/h, 0.1, 100);
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  // === LIGHTING ===
+  scene.add(new THREE.AmbientLight(0x404060, 0.5));
+
+  const sun = new THREE.DirectionalLight(0xffeedd, 1.4);
+  sun.position.set(6, 14, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 35;
+  sun.shadow.camera.left = -8; sun.shadow.camera.right = 8;
+  sun.shadow.camera.top = 8; sun.shadow.camera.bottom = -8;
+  sun.shadow.bias = -0.0005;
+  sun.shadow.radius = 3;
+  scene.add(sun);
+
+  const rim = new THREE.DirectionalLight(0x00ccff, 0.35);
+  rim.position.set(-10, 6, -6);
+  scene.add(rim);
+
+  const warm = new THREE.PointLight(0xff8833, 0.3, 25);
+  warm.position.set(6, 6, -6);
+  scene.add(warm);
+
+  const spot = new THREE.SpotLight(0xffffff, 0.3, 30, Math.PI * 0.4, 0.6);
+  spot.position.set(0, 12, 0);
+  spot.target.position.set(0, 0, 0);
+  scene.add(spot);
+  scene.add(spot.target);
+
+  // === FLOOR ===
+  const flMat = new THREE.MeshStandardMaterial({ color: 0x06080e, roughness: 0.9, metalness: 0.1 });
+  const fl = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), flMat);
+  fl.rotation.x = -Math.PI / 2;
+  fl.position.y = -0.85;
+  fl.receiveShadow = true;
+  scene.add(fl);
+
+  buildBoard();
+  updateCam();
+  loop();
+  bindInput();
+}
+
+function buildBoard() {
+  boardGroup = new THREE.Group();
+
+  // === BOARD BASE (thick wood) ===
+  const woodDark = new THREE.MeshStandardMaterial({ color: 0x1a0f06, roughness: 0.45, metalness: 0.25 });
+  const woodMid = new THREE.MeshStandardMaterial({ color: 0x2a1a0a, roughness: 0.4, metalness: 0.3 });
+  const goldTrim = new THREE.MeshStandardMaterial({ color: 0xbb9933, roughness: 0.25, metalness: 0.8 });
+
+  // Main slab
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(9.4, 0.7, 9.4), woodDark);
+  slab.position.y = -0.45;
+  slab.castShadow = true;
+  slab.receiveShadow = true;
+  boardGroup.add(slab);
+
+  // Upper frame
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.12, 9.8), woodMid);
+  frame.position.y = -0.06;
+  frame.receiveShadow = true;
+  boardGroup.add(frame);
+
+  // Gold trims on edges
+  const trimH = new THREE.BoxGeometry(9.9, 0.72, 0.06);
+  const trimV = new THREE.BoxGeometry(0.06, 0.72, 9.9);
+  [[0,-.42,4.92,trimH],[0,-.42,-4.92,trimH],[4.92,-.42,0,trimV],[-4.92,-.42,0,trimV]].forEach(([x,y,z,g]) => {
+    const m = new THREE.Mesh(g, goldTrim);
+    m.position.set(x,y,z);
+    boardGroup.add(m);
+  });
+
+  // === SQUARES ===
+  const lMat = new THREE.MeshStandardMaterial({ color: 0xd4a84b, roughness: 0.4, metalness: 0.08 });
+  const dMat = new THREE.MeshStandardMaterial({ color: 0x6b3a1f, roughness: 0.5, metalness: 0.12 });
+  const sqGeo = new THREE.BoxGeometry(SQ, 0.1, SQ);
 
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
-      const sq = document.createElement('div');
-      const isLight = (r + c) % 2 === 0;
-      sq.className = `square ${isLight ? 'light' : 'dark'}`;
-      sq.dataset.row = r;
-      sq.dataset.col = c;
-
-      // Add file coordinate on last rank
-      if (r === 7) {
-        const coord = document.createElement('span');
-        coord.className = 'coord file';
-        coord.textContent = FILES[c];
-        sq.appendChild(coord);
-      }
-      // Add rank coordinate on first file
-      if (c === 0) {
-        const coord = document.createElement('span');
-        coord.className = 'coord rank';
-        coord.textContent = 8 - r;
-        sq.appendChild(coord);
-      }
-
-      const piece = board[r][c];
-      if (piece) {
-        const pieceEl = document.createElement('span');
-        pieceEl.className = `piece ${piece === piece.toUpperCase() ? 'white' : 'black'}`;
-        pieceEl.textContent = PIECES[piece];
-        sq.appendChild(pieceEl);
-      }
-
-      sq.addEventListener('click', () => handleSquareClick(sq));
-      grid.appendChild(sq);
+      const sq = new THREE.Mesh(sqGeo, (r+c)%2===0 ? lMat : dMat);
+      sq.position.set((c-3.5)*SQ, 0, (r-3.5)*SQ);
+      sq.receiveShadow = true;
+      boardGroup.add(sq);
     }
   }
-}
 
-function handleSquareClick(sq) {
-  if (selectedSquare) {
-    selectedSquare.classList.remove('selected');
-    document.querySelectorAll('.possible-move').forEach(s => s.classList.remove('possible-move'));
-  }
-  if (selectedSquare === sq) {
-    selectedSquare = null;
-    return;
-  }
-  const hasPiece = sq.querySelector('.piece');
-  if (hasPiece) {
-    sq.classList.add('selected');
-    selectedSquare = sq;
-    // Show some possible move indicators (visual demo)
-    showPossibleMoves(sq);
-  } else {
-    selectedSquare = null;
-  }
-}
+  // === PIECES ===
+  piecesGroup = new THREE.Group();
+  const wMat = new THREE.MeshStandardMaterial({ color: 0xf0ead8, roughness: 0.28, metalness: 0.12 });
+  const bMat = new THREE.MeshStandardMaterial({ color: 0x181818, roughness: 0.35, metalness: 0.35 });
 
-function showPossibleMoves(sq) {
-  const r = parseInt(sq.dataset.row);
-  const c = parseInt(sq.dataset.col);
-  const directions = [[-1,0],[-2,0],[-1,-1],[-1,1],[1,0],[0,1],[0,-1]];
-  directions.forEach(([dr,dc]) => {
-    const nr = r + dr, nc = c + dc;
-    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-      const target = document.querySelector(`.square[data-row="${nr}"][data-col="${nc}"]`);
-      if (target && !target.querySelector('.piece')) {
-        target.classList.add('possible-move');
-      }
+  const rows = FEN.split('/');
+  const scaleMap = { pawn:0.55, rook:0.55, knight:0.52, bishop:0.50, queen:0.48, king:0.44 };
+
+  for (let r = 0; r < 8; r++) {
+    let c = 0;
+    for (const ch of rows[r]) {
+      if (ch >= '1' && ch <= '8') { c += parseInt(ch); continue; }
+      const t = PMAP[ch];
+      const isW = ch === ch.toUpperCase();
+      const geo = new THREE.LatheGeometry(mkProfile(t), 24);
+      const piece = new THREE.Mesh(geo, (isW ? wMat : bMat).clone());
+      const s = scaleMap[t] || 0.55;
+      piece.scale.set(s, s, s);
+      piece.position.set((c-3.5)*SQ, 0.05, (r-3.5)*SQ);
+      piece.castShadow = true;
+      piece.receiveShadow = true;
+      piecesGroup.add(piece);
+      c++;
     }
+  }
+
+  boardGroup.add(piecesGroup);
+  scene.add(boardGroup);
+}
+
+function updateCam() {
+  const x = camR * Math.sin(camP) * Math.sin(camA);
+  const y = camR * Math.cos(camP);
+  const z = camR * Math.sin(camP) * Math.cos(camA);
+  camera.position.set(x, y, z);
+  camera.lookAt(0, -0.2, 0);
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+  camA += (tA - camA) * 0.07;
+  camP += (tP - camP) * 0.07;
+  if (!isDrag) tA += 0.0008;
+  updateCam();
+  renderer.render(scene, camera);
+}
+
+// === INPUT ===
+function bindInput() {
+  canvas.addEventListener('mousedown', e => { isDrag = true; prev = {x:e.clientX,y:e.clientY}; });
+  window.addEventListener('mousemove', e => {
+    if (!isDrag) return;
+    tA += (e.clientX - prev.x) * 0.007;
+    tP = Math.max(0.12, Math.min(Math.PI*0.48, tP - (e.clientY-prev.y)*0.005));
+    prev = {x:e.clientX,y:e.clientY};
+  });
+  window.addEventListener('mouseup', () => isDrag = false);
+
+  canvas.addEventListener('touchstart', e => { isDrag = true; prev = {x:e.touches[0].clientX,y:e.touches[0].clientY}; }, {passive:true});
+  canvas.addEventListener('touchmove', e => {
+    if (!isDrag || !e.touches.length) return;
+    tA += (e.touches[0].clientX - prev.x) * 0.007;
+    tP = Math.max(0.12, Math.min(Math.PI*0.48, tP - (e.touches[0].clientY-prev.y)*0.005));
+    prev = {x:e.touches[0].clientX,y:e.touches[0].clientY};
+  }, {passive:true});
+  canvas.addEventListener('touchend', () => isDrag = false);
+
+  window.addEventListener('resize', () => {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
   });
 }
 
-// View toggle
-function setView(mode) {
-  const wrapper = document.getElementById('boardWrapper');
-  const btn2d = document.getElementById('btn2d');
-  const btn3d = document.getElementById('btn3d');
-
-  if (mode === '2d') {
-    wrapper.classList.add('flat');
-    btn2d.classList.add('active');
-    btn3d.classList.remove('active');
-  } else {
-    wrapper.classList.remove('flat');
-    btn3d.classList.add('active');
-    btn2d.classList.remove('active');
-  }
+function togView(v) {
+  document.getElementById('b3d').classList.toggle('on', v);
+  document.getElementById('b2d').classList.toggle('on', !v);
+  if (v) { tP = Math.PI * 0.3; tA = Math.PI * 0.75; }
+  else { tP = 0.05; }
 }
 
-// Timer simulation
-let topTime = 600, bottomTime = 587;
-let activeTimer = 'bottom';
-
-function formatTime(secs) {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
+// === TIMERS ===
+let tTop = 600, tBot = 587;
 setInterval(() => {
-  if (activeTimer === 'bottom' && bottomTime > 0) {
-    bottomTime--;
-    document.getElementById('timerBottom').textContent = formatTime(bottomTime);
-  } else if (activeTimer === 'top' && topTime > 0) {
-    topTime--;
-    document.getElementById('timerTop').textContent = formatTime(topTime);
-  }
+  tBot--;
+  if (tBot >= 0) document.getElementById('tB').textContent = `${Math.floor(tBot/60)}:${(tBot%60).toString().padStart(2,'0')}`;
 }, 1000);
 
-// Floating particles
-function createParticles() {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < 15; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 8 + 's';
-    p.style.animationDuration = (6 + Math.random() * 6) + 's';
-    if (Math.random() > 0.6) p.style.background = 'var(--accent-pink)';
-    if (Math.random() > 0.8) p.style.background = 'var(--accent-gold)';
-    container.appendChild(p);
-  }
-}
-
-// Init
-renderBoard(INITIAL_FEN);
-createParticles();
+init();
 </script>
 </body>
 </html>
