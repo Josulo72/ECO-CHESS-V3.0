@@ -248,565 +248,1697 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:#e2e8f0;overflow
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-<script type="text/babel">
-const { useState, useEffect, useCallback, useRef } = React;
+<script>
+"use strict";
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var _React = React,
+  useState = _React.useState,
+  useEffect = _React.useEffect,
+  useCallback = _React.useCallback,
+  useRef = _React.useRef;
 
 // ═══════════════════════════════════════════════════════
 //  CHESS ENGINE
 // ═══════════════════════════════════════════════════════
-const PIECES={wK:"♔",wQ:"♕",wR:"♖",wB:"♗",wN:"♘",wP:"♙",bK:"♚",bQ:"♛",bR:"♜",bB:"♝",bN:"♞",bP:"♟"};
-function initialBoard(){return[[{t:"r",c:"b"},{t:"n",c:"b"},{t:"b",c:"b"},{t:"q",c:"b"},{t:"k",c:"b"},{t:"b",c:"b"},{t:"n",c:"b"},{t:"r",c:"b"}],[{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"},{t:"p",c:"b"}],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"},{t:"p",c:"w"}],[{t:"r",c:"w"},{t:"n",c:"w"},{t:"b",c:"w"},{t:"q",c:"w"},{t:"k",c:"w"},{t:"b",c:"w"},{t:"n",c:"w"},{t:"r",c:"w"}]]}
-function cloneBoard(b){return b.map(r=>r.map(c=>c?{...c}:null))}
-function inBounds(r,c){return r>=0&&r<8&&c>=0&&c<8}
-function findKing(board,color){for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(board[r][c]&&board[r][c].t==="k"&&board[r][c].c===color)return[r,c];return null}
-function isAttacked(board,row,col,byColor){
-  for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const r=row+dr,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="n"&&board[r][c]?.c===byColor)return true}
-  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const r=row+dr,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="k"&&board[r][c]?.c===byColor)return true}
-  const pd=byColor==="w"?1:-1;for(const dc of[-1,1]){const r=row+pd,c=col+dc;if(inBounds(r,c)&&board[r][c]?.t==="p"&&board[r][c]?.c===byColor)return true}
-  for(const[dr,dc]of[[0,1],[0,-1],[1,0],[-1,0]]){for(let i=1;i<8;i++){const r=row+dr*i,c=col+dc*i;if(!inBounds(r,c))break;if(board[r][c]){if(board[r][c].c===byColor&&(board[r][c].t==="r"||board[r][c].t==="q"))return true;break}}}
-  for(const[dr,dc]of[[1,1],[1,-1],[-1,1],[-1,-1]]){for(let i=1;i<8;i++){const r=row+dr*i,c=col+dc*i;if(!inBounds(r,c))break;if(board[r][c]){if(board[r][c].c===byColor&&(board[r][c].t==="b"||board[r][c].t==="q"))return true;break}}}
+var PIECES = {
+  wK: "♔",
+  wQ: "♕",
+  wR: "♖",
+  wB: "♗",
+  wN: "♘",
+  wP: "♙",
+  bK: "♚",
+  bQ: "♛",
+  bR: "♜",
+  bB: "♝",
+  bN: "♞",
+  bP: "♟"
+};
+function initialBoard() {
+  return [[{
+    t: "r",
+    c: "b"
+  }, {
+    t: "n",
+    c: "b"
+  }, {
+    t: "b",
+    c: "b"
+  }, {
+    t: "q",
+    c: "b"
+  }, {
+    t: "k",
+    c: "b"
+  }, {
+    t: "b",
+    c: "b"
+  }, {
+    t: "n",
+    c: "b"
+  }, {
+    t: "r",
+    c: "b"
+  }], [{
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }, {
+    t: "p",
+    c: "b"
+  }], [null, null, null, null, null, null, null, null], [null, null, null, null, null, null, null, null], [null, null, null, null, null, null, null, null], [null, null, null, null, null, null, null, null], [{
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }, {
+    t: "p",
+    c: "w"
+  }], [{
+    t: "r",
+    c: "w"
+  }, {
+    t: "n",
+    c: "w"
+  }, {
+    t: "b",
+    c: "w"
+  }, {
+    t: "q",
+    c: "w"
+  }, {
+    t: "k",
+    c: "w"
+  }, {
+    t: "b",
+    c: "w"
+  }, {
+    t: "n",
+    c: "w"
+  }, {
+    t: "r",
+    c: "w"
+  }]];
+}
+function cloneBoard(b) {
+  return b.map(function (r) {
+    return r.map(function (c) {
+      return c ? _objectSpread({}, c) : null;
+    });
+  });
+}
+function inBounds(r, c) {
+  return r >= 0 && r < 8 && c >= 0 && c < 8;
+}
+function findKing(board, color) {
+  for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) if (board[r][c] && board[r][c].t === "k" && board[r][c].c === color) return [r, c];
+  return null;
+}
+function isAttacked(board, row, col, byColor) {
+  for (var _i = 0, _arr = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]; _i < _arr.length; _i++) {
+    var _board$r$c, _board$r$c2;
+    var _arr$_i = _slicedToArray(_arr[_i], 2),
+      dr = _arr$_i[0],
+      dc = _arr$_i[1];
+    var r = row + dr,
+      c = col + dc;
+    if (inBounds(r, c) && ((_board$r$c = board[r][c]) === null || _board$r$c === void 0 ? void 0 : _board$r$c.t) === "n" && ((_board$r$c2 = board[r][c]) === null || _board$r$c2 === void 0 ? void 0 : _board$r$c2.c) === byColor) return true;
+  }
+  for (var _dr = -1; _dr <= 1; _dr++) for (var _dc = -1; _dc <= 1; _dc++) {
+    var _board$_r$_c, _board$_r$_c2;
+    if (!_dr && !_dc) continue;
+    var _r = row + _dr,
+      _c = col + _dc;
+    if (inBounds(_r, _c) && ((_board$_r$_c = board[_r][_c]) === null || _board$_r$_c === void 0 ? void 0 : _board$_r$_c.t) === "k" && ((_board$_r$_c2 = board[_r][_c]) === null || _board$_r$_c2 === void 0 ? void 0 : _board$_r$_c2.c) === byColor) return true;
+  }
+  var pd = byColor === "w" ? 1 : -1;
+  for (var _i2 = 0, _arr2 = [-1, 1]; _i2 < _arr2.length; _i2++) {
+    var _board$_r2$_c, _board$_r2$_c2;
+    var _dc2 = _arr2[_i2];
+    var _r2 = row + pd,
+      _c2 = col + _dc2;
+    if (inBounds(_r2, _c2) && ((_board$_r2$_c = board[_r2][_c2]) === null || _board$_r2$_c === void 0 ? void 0 : _board$_r2$_c.t) === "p" && ((_board$_r2$_c2 = board[_r2][_c2]) === null || _board$_r2$_c2 === void 0 ? void 0 : _board$_r2$_c2.c) === byColor) return true;
+  }
+  for (var _i3 = 0, _arr3 = [[0, 1], [0, -1], [1, 0], [-1, 0]]; _i3 < _arr3.length; _i3++) {
+    var _arr3$_i = _slicedToArray(_arr3[_i3], 2),
+      _dr2 = _arr3$_i[0],
+      _dc3 = _arr3$_i[1];
+    for (var i = 1; i < 8; i++) {
+      var _r3 = row + _dr2 * i,
+        _c3 = col + _dc3 * i;
+      if (!inBounds(_r3, _c3)) break;
+      if (board[_r3][_c3]) {
+        if (board[_r3][_c3].c === byColor && (board[_r3][_c3].t === "r" || board[_r3][_c3].t === "q")) return true;
+        break;
+      }
+    }
+  }
+  for (var _i4 = 0, _arr4 = [[1, 1], [1, -1], [-1, 1], [-1, -1]]; _i4 < _arr4.length; _i4++) {
+    var _arr4$_i = _slicedToArray(_arr4[_i4], 2),
+      _dr3 = _arr4$_i[0],
+      _dc4 = _arr4$_i[1];
+    for (var _i5 = 1; _i5 < 8; _i5++) {
+      var _r4 = row + _dr3 * _i5,
+        _c4 = col + _dc4 * _i5;
+      if (!inBounds(_r4, _c4)) break;
+      if (board[_r4][_c4]) {
+        if (board[_r4][_c4].c === byColor && (board[_r4][_c4].t === "b" || board[_r4][_c4].t === "q")) return true;
+        break;
+      }
+    }
+  }
   return false;
 }
-function isInCheck(board,color){const k=findKing(board,color);if(!k)return false;return isAttacked(board,k[0],k[1],color==="w"?"b":"w")}
-function pseudoMoves(board,color,castling,enPassant){
-  const moves=[];const dir=color==="w"?-1:1;const startRow=color==="w"?6:1;const promoRow=color==="w"?0:7;
-  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
-    const p=board[r][c];if(!p||p.c!==color)continue;
-    if(p.t==="p"){if(inBounds(r+dir,c)&&!board[r+dir][c]){moves.push({fr:r,fc:c,tr:r+dir,tc:c,promo:r+dir===promoRow});if(r===startRow&&!board[r+2*dir][c])moves.push({fr:r,fc:c,tr:r+2*dir,tc:c})}for(const dc of[-1,1]){const nr=r+dir,nc=c+dc;if(!inBounds(nr,nc))continue;if(board[nr][nc]&&board[nr][nc].c!==color)moves.push({fr:r,fc:c,tr:nr,tc:nc,promo:nr===promoRow});if(enPassant&&enPassant[0]===nr&&enPassant[1]===nc)moves.push({fr:r,fc:c,tr:nr,tc:nc,ep:true})}}
-    if(p.t==="n"){for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const nr=r+dr,nc=c+dc;if(inBounds(nr,nc)&&(!board[nr][nc]||board[nr][nc].c!==color))moves.push({fr:r,fc:c,tr:nr,tc:nc})}}
-    const slide=(dirs)=>{for(const[dr,dc]of dirs)for(let i=1;i<8;i++){const nr=r+dr*i,nc=c+dc*i;if(!inBounds(nr,nc))break;if(board[nr][nc]){if(board[nr][nc].c!==color)moves.push({fr:r,fc:c,tr:nr,tc:nc});break}moves.push({fr:r,fc:c,tr:nr,tc:nc})}};
-    if(p.t==="b"||p.t==="q")slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
-    if(p.t==="r"||p.t==="q")slide([[0,1],[0,-1],[1,0],[-1,0]]);
-    if(p.t==="k"){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;if(inBounds(nr,nc)&&(!board[nr][nc]||board[nr][nc].c!==color))moves.push({fr:r,fc:c,tr:nr,tc:nc})}
-      const row=color==="w"?7:0;const en=color==="w"?"b":"w";
-      if(r===row&&c===4){if(castling[color+"K"]&&!board[row][5]&&!board[row][6]&&board[row][7]?.t==="r"&&board[row][7]?.c===color&&!isAttacked(board,row,4,en)&&!isAttacked(board,row,5,en)&&!isAttacked(board,row,6,en))moves.push({fr:r,fc:c,tr:row,tc:6,castle:"K"});if(castling[color+"Q"]&&!board[row][3]&&!board[row][2]&&!board[row][1]&&board[row][0]?.t==="r"&&board[row][0]?.c===color&&!isAttacked(board,row,4,en)&&!isAttacked(board,row,3,en)&&!isAttacked(board,row,2,en))moves.push({fr:r,fc:c,tr:row,tc:2,castle:"Q"})}
+function isInCheck(board, color) {
+  var k = findKing(board, color);
+  if (!k) return false;
+  return isAttacked(board, k[0], k[1], color === "w" ? "b" : "w");
+}
+function pseudoMoves(board, color, castling, enPassant) {
+  var moves = [];
+  var dir = color === "w" ? -1 : 1;
+  var startRow = color === "w" ? 6 : 1;
+  var promoRow = color === "w" ? 0 : 7;
+  var _loop = function _loop(r) {
+    var _loop2 = function _loop2(c) {
+      var p = board[r][c];
+      if (!p || p.c !== color) return 1; // continue
+      if (p.t === "p") {
+        if (inBounds(r + dir, c) && !board[r + dir][c]) {
+          moves.push({
+            fr: r,
+            fc: c,
+            tr: r + dir,
+            tc: c,
+            promo: r + dir === promoRow
+          });
+          if (r === startRow && !board[r + 2 * dir][c]) moves.push({
+            fr: r,
+            fc: c,
+            tr: r + 2 * dir,
+            tc: c
+          });
+        }
+        for (var _i6 = 0, _arr5 = [-1, 1]; _i6 < _arr5.length; _i6++) {
+          var dc = _arr5[_i6];
+          var nr = r + dir,
+            nc = c + dc;
+          if (!inBounds(nr, nc)) continue;
+          if (board[nr][nc] && board[nr][nc].c !== color) moves.push({
+            fr: r,
+            fc: c,
+            tr: nr,
+            tc: nc,
+            promo: nr === promoRow
+          });
+          if (enPassant && enPassant[0] === nr && enPassant[1] === nc) moves.push({
+            fr: r,
+            fc: c,
+            tr: nr,
+            tc: nc,
+            ep: true
+          });
+        }
+      }
+      if (p.t === "n") {
+        for (var _i7 = 0, _arr6 = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]; _i7 < _arr6.length; _i7++) {
+          var _arr6$_i = _slicedToArray(_arr6[_i7], 2),
+            dr = _arr6$_i[0],
+            _dc5 = _arr6$_i[1];
+          var _nr = r + dr,
+            _nc = c + _dc5;
+          if (inBounds(_nr, _nc) && (!board[_nr][_nc] || board[_nr][_nc].c !== color)) moves.push({
+            fr: r,
+            fc: c,
+            tr: _nr,
+            tc: _nc
+          });
+        }
+      }
+      var slide = function slide(dirs) {
+        var _iterator = _createForOfIteratorHelper(dirs),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _step$value = _slicedToArray(_step.value, 2),
+              _dr4 = _step$value[0],
+              _dc6 = _step$value[1];
+            for (var i = 1; i < 8; i++) {
+              var _nr2 = r + _dr4 * i,
+                _nc2 = c + _dc6 * i;
+              if (!inBounds(_nr2, _nc2)) break;
+              if (board[_nr2][_nc2]) {
+                if (board[_nr2][_nc2].c !== color) moves.push({
+                  fr: r,
+                  fc: c,
+                  tr: _nr2,
+                  tc: _nc2
+                });
+                break;
+              }
+              moves.push({
+                fr: r,
+                fc: c,
+                tr: _nr2,
+                tc: _nc2
+              });
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+      };
+      if (p.t === "b" || p.t === "q") slide([[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+      if (p.t === "r" || p.t === "q") slide([[0, 1], [0, -1], [1, 0], [-1, 0]]);
+      if (p.t === "k") {
+        for (var _dr5 = -1; _dr5 <= 1; _dr5++) for (var _dc7 = -1; _dc7 <= 1; _dc7++) {
+          if (!_dr5 && !_dc7) continue;
+          var _nr3 = r + _dr5,
+            _nc3 = c + _dc7;
+          if (inBounds(_nr3, _nc3) && (!board[_nr3][_nc3] || board[_nr3][_nc3].c !== color)) moves.push({
+            fr: r,
+            fc: c,
+            tr: _nr3,
+            tc: _nc3
+          });
+        }
+        var row = color === "w" ? 7 : 0;
+        var en = color === "w" ? "b" : "w";
+        if (r === row && c === 4) {
+          var _board$row$, _board$row$2, _board$row$3, _board$row$4;
+          if (castling[color + "K"] && !board[row][5] && !board[row][6] && ((_board$row$ = board[row][7]) === null || _board$row$ === void 0 ? void 0 : _board$row$.t) === "r" && ((_board$row$2 = board[row][7]) === null || _board$row$2 === void 0 ? void 0 : _board$row$2.c) === color && !isAttacked(board, row, 4, en) && !isAttacked(board, row, 5, en) && !isAttacked(board, row, 6, en)) moves.push({
+            fr: r,
+            fc: c,
+            tr: row,
+            tc: 6,
+            castle: "K"
+          });
+          if (castling[color + "Q"] && !board[row][3] && !board[row][2] && !board[row][1] && ((_board$row$3 = board[row][0]) === null || _board$row$3 === void 0 ? void 0 : _board$row$3.t) === "r" && ((_board$row$4 = board[row][0]) === null || _board$row$4 === void 0 ? void 0 : _board$row$4.c) === color && !isAttacked(board, row, 4, en) && !isAttacked(board, row, 3, en) && !isAttacked(board, row, 2, en)) moves.push({
+            fr: r,
+            fc: c,
+            tr: row,
+            tc: 2,
+            castle: "Q"
+          });
+        }
+      }
+    };
+    for (var c = 0; c < 8; c++) {
+      if (_loop2(c)) continue;
     }
+  };
+  for (var r = 0; r < 8; r++) {
+    _loop(r);
   }
   return moves;
 }
-function applyMove(board,move){const nb=cloneBoard(board);const piece=nb[move.fr][move.fc];nb[move.tr][move.tc]=piece;nb[move.fr][move.fc]=null;if(move.ep)nb[move.fr][move.tc]=null;if(move.castle){const row=move.fr;if(move.castle==="K"){nb[row][5]=nb[row][7];nb[row][7]=null}if(move.castle==="Q"){nb[row][3]=nb[row][0];nb[row][0]=null}}if(move.promo)nb[move.tr][move.tc]={t:"q",c:piece.c};return nb}
-function getLegalMoves(board,color,castling,enPassant){return pseudoMoves(board,color,castling,enPassant).filter(m=>{const nb=applyMove(board,m);return!isInCheck(nb,color)})}
+function applyMove(board, move) {
+  var nb = cloneBoard(board);
+  var piece = nb[move.fr][move.fc];
+  nb[move.tr][move.tc] = piece;
+  nb[move.fr][move.fc] = null;
+  if (move.ep) nb[move.fr][move.tc] = null;
+  if (move.castle) {
+    var row = move.fr;
+    if (move.castle === "K") {
+      nb[row][5] = nb[row][7];
+      nb[row][7] = null;
+    }
+    if (move.castle === "Q") {
+      nb[row][3] = nb[row][0];
+      nb[row][0] = null;
+    }
+  }
+  if (move.promo) nb[move.tr][move.tc] = {
+    t: "q",
+    c: piece.c
+  };
+  return nb;
+}
+function getLegalMoves(board, color, castling, enPassant) {
+  return pseudoMoves(board, color, castling, enPassant).filter(function (m) {
+    var nb = applyMove(board, m);
+    return !isInCheck(nb, color);
+  });
+}
 
 // ═══ AI ═══
-const PVAL={p:100,n:320,b:330,r:500,q:900,k:20000};
-function evalBoard(board,aiColor){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(!p)continue;const v=(PVAL[p.t]||0)+(3.5-Math.abs(r-3.5)+3.5-Math.abs(c-3.5))*2;if(p.c===aiColor)s+=v;else s-=v}return s}
-function updCE(board,move,castling){const nc={...castling};const p=board[move.fr][move.fc];if(p?.t==="k"){nc[p.c+"K"]=false;nc[p.c+"Q"]=false}if(p?.t==="r"){if(move.fc===0)nc[p.c+"Q"]=false;if(move.fc===7)nc[p.c+"K"]=false}return{nc,ne:p?.t==="p"&&Math.abs(move.tr-move.fr)===2?[(move.fr+move.tr)/2,move.fc]:null}}
-function minimax(board,depth,a,b,isMax,aiColor,castling,ep){
-  if(depth===0)return evalBoard(board,aiColor);
-  const cc=isMax?aiColor:(aiColor==="b"?"w":"b");
-  const moves=getLegalMoves(board,cc,castling,ep);
-  if(!moves.length){if(isInCheck(board,cc))return isMax?-50000:50000;return 0}
-  if(isMax){let best=-Infinity;for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,a,b,false,aiColor,nc,ne);best=Math.max(best,v);a=Math.max(a,v);if(b<=a)break}return best}
-  else{let best=Infinity;for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,a,b,true,aiColor,nc,ne);best=Math.min(best,v);b=Math.min(b,v);if(b<=a)break}return best}
+var PVAL = {
+  p: 100,
+  n: 320,
+  b: 330,
+  r: 500,
+  q: 900,
+  k: 20000
+};
+function evalBoard(board, aiColor) {
+  var s = 0;
+  for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+    var p = board[r][c];
+    if (!p) continue;
+    var v = (PVAL[p.t] || 0) + (3.5 - Math.abs(r - 3.5) + 3.5 - Math.abs(c - 3.5)) * 2;
+    if (p.c === aiColor) s += v;else s -= v;
+  }
+  return s;
 }
-function greedy(board,move,color){let s=Math.random();const t=board[move.tr][move.tc];const v={p:1,n:3,b:3.2,r:5,q:9,k:0};if(t)s+=v[t.t]*10;s+=(4-(Math.abs(move.tr-3.5)+Math.abs(move.tc-3.5)))*.5;if(isInCheck(applyMove(board,move),color==="w"?"b":"w"))s+=5;return s}
-function getBestMove(board,color,castling,ep,diff){
-  const moves=getLegalMoves(board,color,castling,ep);if(!moves.length)return null;
-  if(diff===1)return moves[Math.floor(Math.random()*moves.length)];
-  if(diff===2){const sc=moves.map(m=>({m,s:greedy(board,m,color)}));sc.sort((a,b)=>b.s-a.s);return sc[0].m}
-  const depth={3:1,4:2,5:3}[diff]||1;
-  let best=null,bestV=-Infinity;
-  for(const m of moves){const{nc,ne}=updCE(board,m,castling);const v=minimax(applyMove(board,m),depth-1,-Infinity,Infinity,false,color,nc,ne);if(v>bestV){bestV=v;best=m}}
+function updCE(board, move, castling) {
+  var nc = _objectSpread({}, castling);
+  var p = board[move.fr][move.fc];
+  if ((p === null || p === void 0 ? void 0 : p.t) === "k") {
+    nc[p.c + "K"] = false;
+    nc[p.c + "Q"] = false;
+  }
+  if ((p === null || p === void 0 ? void 0 : p.t) === "r") {
+    if (move.fc === 0) nc[p.c + "Q"] = false;
+    if (move.fc === 7) nc[p.c + "K"] = false;
+  }
+  return {
+    nc: nc,
+    ne: (p === null || p === void 0 ? void 0 : p.t) === "p" && Math.abs(move.tr - move.fr) === 2 ? [(move.fr + move.tr) / 2, move.fc] : null
+  };
+}
+function minimax(board, depth, a, b, isMax, aiColor, castling, ep) {
+  if (depth === 0) return evalBoard(board, aiColor);
+  var cc = isMax ? aiColor : aiColor === "b" ? "w" : "b";
+  var moves = getLegalMoves(board, cc, castling, ep);
+  if (!moves.length) {
+    if (isInCheck(board, cc)) return isMax ? -50000 : 50000;
+    return 0;
+  }
+  if (isMax) {
+    var best = -Infinity;
+    var _iterator2 = _createForOfIteratorHelper(moves),
+      _step2;
+    try {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var m = _step2.value;
+        var _updCE = updCE(board, m, castling),
+          nc = _updCE.nc,
+          ne = _updCE.ne;
+        var v = minimax(applyMove(board, m), depth - 1, a, b, false, aiColor, nc, ne);
+        best = Math.max(best, v);
+        a = Math.max(a, v);
+        if (b <= a) break;
+      }
+    } catch (err) {
+      _iterator2.e(err);
+    } finally {
+      _iterator2.f();
+    }
+    return best;
+  } else {
+    var _best = Infinity;
+    var _iterator3 = _createForOfIteratorHelper(moves),
+      _step3;
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _m = _step3.value;
+        var _updCE2 = updCE(board, _m, castling),
+          _nc4 = _updCE2.nc,
+          _ne = _updCE2.ne;
+        var _v = minimax(applyMove(board, _m), depth - 1, a, b, true, aiColor, _nc4, _ne);
+        _best = Math.min(_best, _v);
+        b = Math.min(b, _v);
+        if (b <= a) break;
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+    return _best;
+  }
+}
+function greedy(board, move, color) {
+  var s = Math.random();
+  var t = board[move.tr][move.tc];
+  var v = {
+    p: 1,
+    n: 3,
+    b: 3.2,
+    r: 5,
+    q: 9,
+    k: 0
+  };
+  if (t) s += v[t.t] * 10;
+  s += (4 - (Math.abs(move.tr - 3.5) + Math.abs(move.tc - 3.5))) * .5;
+  if (isInCheck(applyMove(board, move), color === "w" ? "b" : "w")) s += 5;
+  return s;
+}
+function getBestMove(board, color, castling, ep, diff) {
+  var moves = getLegalMoves(board, color, castling, ep);
+  if (!moves.length) return null;
+  if (diff === 1) return moves[Math.floor(Math.random() * moves.length)];
+  if (diff === 2) {
+    var sc = moves.map(function (m) {
+      return {
+        m: m,
+        s: greedy(board, m, color)
+      };
+    });
+    sc.sort(function (a, b) {
+      return b.s - a.s;
+    });
+    return sc[0].m;
+  }
+  var depth = {
+    3: 1,
+    4: 2,
+    5: 3
+  }[diff] || 1;
+  var best = null,
+    bestV = -Infinity;
+  var _iterator4 = _createForOfIteratorHelper(moves),
+    _step4;
+  try {
+    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+      var m = _step4.value;
+      var _updCE3 = updCE(board, m, castling),
+        nc = _updCE3.nc,
+        ne = _updCE3.ne;
+      var v = minimax(applyMove(board, m), depth - 1, -Infinity, Infinity, false, color, nc, ne);
+      if (v > bestV) {
+        bestV = v;
+        best = m;
+      }
+    }
+  } catch (err) {
+    _iterator4.e(err);
+  } finally {
+    _iterator4.f();
+  }
   return best;
 }
 
 // ═══════════════════════════════════════════════════════
 //  THREE.JS PIECE BUILDER
 // ═══════════════════════════════════════════════════════
-function createPieceMesh(type,isWhite){
-  const mat=new THREE.MeshPhongMaterial(isWhite
-    ?{color:0xf0e2cc,shininess:100,specular:0xffffff}
-    :{color:0x100820,shininess:70,specular:0x6633aa});
-  const g=new THREE.Group();
-  const add=(geom,y)=>{const m=new THREE.Mesh(geom,mat);m.position.y=y;m.castShadow=true;g.add(m)};
-  add(new THREE.CylinderGeometry(0.38,0.42,0.1,14),0.05);
-  if(type==="p"){add(new THREE.CylinderGeometry(0.19,0.27,0.28,12),0.19);add(new THREE.SphereGeometry(0.2,12,12),0.37)}
-  else if(type==="r"){add(new THREE.CylinderGeometry(0.25,0.27,0.48,12),0.34);add(new THREE.CylinderGeometry(0.29,0.29,0.1,12),0.63)}
-  else if(type==="n"){add(new THREE.CylinderGeometry(0.17,0.24,0.34,12),0.27);const h=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.4,0.32),mat);h.position.set(0.07,0.56,0);h.rotation.z=-0.28;h.castShadow=true;g.add(h)}
-  else if(type==="b"){add(new THREE.CylinderGeometry(0.11,0.22,0.58,12),0.39);add(new THREE.SphereGeometry(0.13,10,10),0.7);add(new THREE.SphereGeometry(0.065,8,8),0.84)}
-  else if(type==="q"){add(new THREE.CylinderGeometry(0.15,0.24,0.62,12),0.41);add(new THREE.SphereGeometry(0.19,12,12),0.74);for(let i=0;i<5;i++){const a=(i/5)*Math.PI*2;const cp=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.045,0.12,6),mat);cp.position.set(Math.cos(a)*0.15,0.95,Math.sin(a)*0.15);cp.castShadow=true;g.add(cp)}}
-  else if(type==="k"){add(new THREE.CylinderGeometry(0.17,0.24,0.64,12),0.42);const cv=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.3,0.08),mat);cv.position.y=0.9;cv.castShadow=true;g.add(cv);const ch=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.08,0.08),mat);ch.position.y=0.98;ch.castShadow=true;g.add(ch)}
+function createPieceMesh(type, isWhite) {
+  var mat = new THREE.MeshPhongMaterial(isWhite ? {
+    color: 0xf0e2cc,
+    shininess: 100,
+    specular: 0xffffff
+  } : {
+    color: 0x100820,
+    shininess: 70,
+    specular: 0x6633aa
+  });
+  var g = new THREE.Group();
+  var add = function add(geom, y) {
+    var m = new THREE.Mesh(geom, mat);
+    m.position.y = y;
+    m.castShadow = true;
+    g.add(m);
+  };
+  add(new THREE.CylinderGeometry(0.38, 0.42, 0.1, 14), 0.05);
+  if (type === "p") {
+    add(new THREE.CylinderGeometry(0.19, 0.27, 0.28, 12), 0.19);
+    add(new THREE.SphereGeometry(0.2, 12, 12), 0.37);
+  } else if (type === "r") {
+    add(new THREE.CylinderGeometry(0.25, 0.27, 0.48, 12), 0.34);
+    add(new THREE.CylinderGeometry(0.29, 0.29, 0.1, 12), 0.63);
+  } else if (type === "n") {
+    add(new THREE.CylinderGeometry(0.17, 0.24, 0.34, 12), 0.27);
+    var h = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.32), mat);
+    h.position.set(0.07, 0.56, 0);
+    h.rotation.z = -0.28;
+    h.castShadow = true;
+    g.add(h);
+  } else if (type === "b") {
+    add(new THREE.CylinderGeometry(0.11, 0.22, 0.58, 12), 0.39);
+    add(new THREE.SphereGeometry(0.13, 10, 10), 0.7);
+    add(new THREE.SphereGeometry(0.065, 8, 8), 0.84);
+  } else if (type === "q") {
+    add(new THREE.CylinderGeometry(0.15, 0.24, 0.62, 12), 0.41);
+    add(new THREE.SphereGeometry(0.19, 12, 12), 0.74);
+    for (var i = 0; i < 5; i++) {
+      var a = i / 5 * Math.PI * 2;
+      var cp = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.045, 0.12, 6), mat);
+      cp.position.set(Math.cos(a) * 0.15, 0.95, Math.sin(a) * 0.15);
+      cp.castShadow = true;
+      g.add(cp);
+    }
+  } else if (type === "k") {
+    add(new THREE.CylinderGeometry(0.17, 0.24, 0.64, 12), 0.42);
+    var cv = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.08), mat);
+    cv.position.y = 0.9;
+    cv.castShadow = true;
+    g.add(cv);
+    var ch = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.08), mat);
+    ch.position.y = 0.98;
+    ch.castShadow = true;
+    g.add(ch);
+  }
   return g;
 }
 
 // ═══════════════════════════════════════════════════════
 //  BOARD 3D COMPONENT — fixed camera + board geometry
 // ═══════════════════════════════════════════════════════
-function Board3D({board,selected,legalMoves,lastMove,onCellClick,size}){
-  const mountRef=useRef(null);
-  const threeRef=useRef(null);
-  const clickRef=useRef(onCellClick);
-  useEffect(()=>{clickRef.current=onCellClick});
-
-  useEffect(()=>{
-    const mount=mountRef.current;
-    if(!mount||typeof THREE==="undefined")return;
+function Board3D(_ref) {
+  var board = _ref.board,
+    selected = _ref.selected,
+    legalMoves = _ref.legalMoves,
+    lastMove = _ref.lastMove,
+    onCellClick = _ref.onCellClick,
+    size = _ref.size;
+  var mountRef = useRef(null);
+  var threeRef = useRef(null);
+  var clickRef = useRef(onCellClick);
+  useEffect(function () {
+    clickRef.current = onCellClick;
+  });
+  useEffect(function () {
+    var mount = mountRef.current;
+    if (!mount || typeof THREE === "undefined") return;
 
     // ── Scene ──
-    const scene=new THREE.Scene();
-    scene.background=new THREE.Color(0x020617);
-    scene.fog=new THREE.Fog(0x020617,24,42);
-
-    const camera=new THREE.PerspectiveCamera(42,1,0.1,100);
-    const renderer=new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(size,size);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.shadowMap.enabled=true;
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    var scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020617);
+    scene.fog = new THREE.Fog(0x020617, 24, 42);
+    var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    var renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+    renderer.setSize(size, size);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
 
     // ── Lights ──
-    scene.add(new THREE.AmbientLight(0xffffff,0.5));
-    const dir=new THREE.DirectionalLight(0xfff0e0,1.8);
-    dir.position.set(5,14,7);dir.castShadow=true;
-    dir.shadow.mapSize.width=1024;dir.shadow.mapSize.height=1024;
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    var dir = new THREE.DirectionalLight(0xfff0e0, 1.8);
+    dir.position.set(5, 14, 7);
+    dir.castShadow = true;
+    dir.shadow.mapSize.width = 1024;
+    dir.shadow.mapSize.height = 1024;
     scene.add(dir);
-    scene.add(Object.assign(new THREE.PointLight(0x38bdf8,0.8,28),{position:{x:-9,y:9,z:-7,set(x,y,z){this.x=x;this.y=y;this.z=z}}}));
-    const bl=new THREE.PointLight(0x38bdf8,0.8,28);bl.position.set(-9,9,-7);scene.add(bl);
-    const pl=new THREE.PointLight(0xf472b6,0.2,20);pl.position.set(7,5,9);scene.add(pl);
+    scene.add(Object.assign(new THREE.PointLight(0x38bdf8, 0.8, 28), {
+      position: {
+        x: -9,
+        y: 9,
+        z: -7,
+        set: function set(x, y, z) {
+          this.x = x;
+          this.y = y;
+          this.z = z;
+        }
+      }
+    }));
+    var bl = new THREE.PointLight(0x38bdf8, 0.8, 28);
+    bl.position.set(-9, 9, -7);
+    scene.add(bl);
+    var pl = new THREE.PointLight(0xf472b6, 0.2, 20);
+    pl.position.set(7, 5, 9);
+    scene.add(pl);
 
     // ── Ground plane ──
-    const ground=new THREE.Mesh(
-      new THREE.PlaneGeometry(20,20),
-      new THREE.MeshPhongMaterial({color:0x050e1a,shininess:0})
-    );
-    ground.rotation.x=-Math.PI/2;ground.position.y=-0.16;ground.receiveShadow=true;
+    var ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshPhongMaterial({
+      color: 0x050e1a,
+      shininess: 0
+    }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.16;
+    ground.receiveShadow = true;
     scene.add(ground);
 
     // ── Board frame (4 bars around perimeter, NOT covering squares) ──
     // Board squares span x: -4 to 4, z: -4 to 4
     // Frame sits OUTSIDE that area
-    const frameMat=new THREE.MeshPhongMaterial({color:0x18090200,shininess:15});
-    const fMat=new THREE.MeshPhongMaterial({color:0x1c0d04,shininess:15});
+    var frameMat = new THREE.MeshPhongMaterial({
+      color: 0x18090200,
+      shininess: 15
+    });
+    var fMat = new THREE.MeshPhongMaterial({
+      color: 0x1c0d04,
+      shininess: 15
+    });
     // N/S bars (along X): at z = ±4.45
-    [{z:-4.45},{z:4.45}].forEach(({z})=>{
-      const bar=new THREE.Mesh(new THREE.BoxGeometry(9.8,0.3,0.9),fMat);
-      bar.position.set(0,0.0,z);bar.receiveShadow=true;scene.add(bar);
+    [{
+      z: -4.45
+    }, {
+      z: 4.45
+    }].forEach(function (_ref2) {
+      var z = _ref2.z;
+      var bar = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.3, 0.9), fMat);
+      bar.position.set(0, 0.0, z);
+      bar.receiveShadow = true;
+      scene.add(bar);
     });
     // E/W bars (along Z): at x = ±4.45
-    [{x:-4.45},{x:4.45}].forEach(({x})=>{
-      const bar=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.3,9.8),fMat);
-      bar.position.set(x,0.0,0);bar.receiveShadow=true;scene.add(bar);
+    [{
+      x: -4.45
+    }, {
+      x: 4.45
+    }].forEach(function (_ref3) {
+      var x = _ref3.x;
+      var bar = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 9.8), fMat);
+      bar.position.set(x, 0.0, 0);
+      bar.receiveShadow = true;
+      scene.add(bar);
     });
     // Corner fills
-    [-4.45,4.45].forEach(x=>[-4.45,4.45].forEach(z=>{
-      const c=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.3,0.9),fMat);
-      c.position.set(x,0.0,z);scene.add(c);
-    }));
+    [-4.45, 4.45].forEach(function (x) {
+      return [-4.45, 4.45].forEach(function (z) {
+        var c = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 0.9), fMat);
+        c.position.set(x, 0.0, z);
+        scene.add(c);
+      });
+    });
 
     // ── Checkerboard squares ──
     // Squares at y=0, height=0.12 → top at 0.06, bottom at -0.06
     // Frame at y=0, height=0.3 → top at 0.15 (frame is at ±4.45 in x/z, outside squares)
     // ✓ No overlap since frame is outside the 8×8 area
-    const sqGeom=new THREE.BoxGeometry(1,0.12,1);
-    const LMAT=new THREE.MeshPhongMaterial({color:0xc8a55e,shininess:30});
-    const DMAT=new THREE.MeshPhongMaterial({color:0x3b1b08,shininess:15});
-    const squareMeshes=[];
-    for(let r=0;r<8;r++){
-      for(let c=0;c<8;c++){
-        const isLight=(r+c)%2===1;
-        const mesh=new THREE.Mesh(sqGeom,isLight?LMAT.clone():DMAT.clone());
+    var sqGeom = new THREE.BoxGeometry(1, 0.12, 1);
+    var LMAT = new THREE.MeshPhongMaterial({
+      color: 0xc8a55e,
+      shininess: 30
+    });
+    var DMAT = new THREE.MeshPhongMaterial({
+      color: 0x3b1b08,
+      shininess: 15
+    });
+    var squareMeshes = [];
+    for (var r = 0; r < 8; r++) {
+      for (var c = 0; c < 8; c++) {
+        var isLight = (r + c) % 2 === 1;
+        var mesh = new THREE.Mesh(sqGeom, isLight ? LMAT.clone() : DMAT.clone());
         // c-3.5 centers column c in world: c=0→-3.5, c=7→3.5
-        mesh.position.set(c-3.5,0,r-3.5);
-        mesh.receiveShadow=true;
-        mesh.userData={r,c,isLight,lc:isLight?0xc8a55e:0x3b1b08};
-        squareMeshes.push(mesh);scene.add(mesh);
+        mesh.position.set(c - 3.5, 0, r - 3.5);
+        mesh.receiveShadow = true;
+        mesh.userData = {
+          r: r,
+          c: c,
+          isLight: isLight,
+          lc: isLight ? 0xc8a55e : 0x3b1b08
+        };
+        squareMeshes.push(mesh);
+        scene.add(mesh);
       }
     }
 
     // ── Camera orbit — theta=0 = white's side (positive Z), phi=38° ──
-    let theta=0,phi=38,isDragging=false,dragMoved=false,px=0,py=0;
-    const R=14;
-    function updateCam(){
-      const t=theta*Math.PI/180,p=phi*Math.PI/180;
-      camera.position.set(R*Math.sin(t)*Math.cos(p),R*Math.sin(p),R*Math.cos(t)*Math.cos(p));
-      camera.lookAt(0,0,0);
+    var theta = 0,
+      phi = 38,
+      isDragging = false,
+      dragMoved = false,
+      px = 0,
+      py = 0;
+    var R = 14;
+    function updateCam() {
+      var t = theta * Math.PI / 180,
+        p = phi * Math.PI / 180;
+      camera.position.set(R * Math.sin(t) * Math.cos(p), R * Math.sin(p), R * Math.cos(t) * Math.cos(p));
+      camera.lookAt(0, 0, 0);
     }
     updateCam();
-
-    const raycaster=new THREE.Raycaster();
-    function getXY(e){
-      const r=renderer.domElement.getBoundingClientRect();
-      const cx=e.touches?e.touches[0].clientX:e.clientX;
-      const cy=e.touches?e.touches[0].clientY:e.clientY;
-      return{nx:((cx-r.left)/r.width)*2-1,ny:-((cy-r.top)/r.height)*2+1,cx,cy};
+    var raycaster = new THREE.Raycaster();
+    function getXY(e) {
+      var r = renderer.domElement.getBoundingClientRect();
+      var cx = e.touches ? e.touches[0].clientX : e.clientX;
+      var cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        nx: (cx - r.left) / r.width * 2 - 1,
+        ny: -((cy - r.top) / r.height) * 2 + 1,
+        cx: cx,
+        cy: cy
+      };
     }
-    function onDown(e){const{cx,cy}=getXY(e);isDragging=true;dragMoved=false;px=cx;py=cy}
-    function onMove(e){
-      if(!isDragging)return;
-      const{cx,cy}=getXY(e);const dx=cx-px,dy=cy-py;
-      if(Math.abs(dx)>3||Math.abs(dy)>3)dragMoved=true;
-      theta-=dx*0.4;phi=Math.max(15,Math.min(72,phi+dy*0.3));
-      px=cx;py=cy;updateCam();
+    function onDown(e) {
+      var _getXY = getXY(e),
+        cx = _getXY.cx,
+        cy = _getXY.cy;
+      isDragging = true;
+      dragMoved = false;
+      px = cx;
+      py = cy;
     }
-    function onUp(e){
-      if(!dragMoved&&isDragging){
-        const src=e.type==="touchend"?e.changedTouches[0]:e;
-        const{nx,ny}=getXY(src);
-        raycaster.setFromCamera({x:nx,y:ny},camera);
-        const hits=raycaster.intersectObjects(squareMeshes);
-        if(hits.length>0){const{r,c}=hits[0].object.userData;clickRef.current(r,c)}
+    function onMove(e) {
+      if (!isDragging) return;
+      var _getXY2 = getXY(e),
+        cx = _getXY2.cx,
+        cy = _getXY2.cy;
+      var dx = cx - px,
+        dy = cy - py;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+      theta -= dx * 0.4;
+      phi = Math.max(15, Math.min(72, phi + dy * 0.3));
+      px = cx;
+      py = cy;
+      updateCam();
+    }
+    function onUp(e) {
+      if (!dragMoved && isDragging) {
+        var src = e.type === "touchend" ? e.changedTouches[0] : e;
+        var _getXY3 = getXY(src),
+          nx = _getXY3.nx,
+          ny = _getXY3.ny;
+        raycaster.setFromCamera({
+          x: nx,
+          y: ny
+        }, camera);
+        var hits = raycaster.intersectObjects(squareMeshes);
+        if (hits.length > 0) {
+          var _hits$0$object$userDa = hits[0].object.userData,
+            _r5 = _hits$0$object$userDa.r,
+            _c5 = _hits$0$object$userDa.c;
+          clickRef.current(_r5, _c5);
+        }
       }
-      isDragging=false;
+      isDragging = false;
     }
-    const el=renderer.domElement;
-    el.addEventListener("mousedown",onDown);el.addEventListener("mousemove",onMove);el.addEventListener("mouseup",onUp);
-    el.addEventListener("touchstart",onDown,{passive:true});el.addEventListener("touchmove",onMove,{passive:true});el.addEventListener("touchend",onUp);
-
-    let animId;
-    function animate(){animId=requestAnimationFrame(animate);renderer.render(scene,camera)}
+    var el = renderer.domElement;
+    el.addEventListener("mousedown", onDown);
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseup", onUp);
+    el.addEventListener("touchstart", onDown, {
+      passive: true
+    });
+    el.addEventListener("touchmove", onMove, {
+      passive: true
+    });
+    el.addEventListener("touchend", onUp);
+    var animId;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
     animate();
-    threeRef.current={scene,squareMeshes};
-    return()=>{
+    threeRef.current = {
+      scene: scene,
+      squareMeshes: squareMeshes
+    };
+    return function () {
       cancelAnimationFrame(animId);
-      el.removeEventListener("mousedown",onDown);el.removeEventListener("mousemove",onMove);el.removeEventListener("mouseup",onUp);
-      el.removeEventListener("touchstart",onDown);el.removeEventListener("touchmove",onMove);el.removeEventListener("touchend",onUp);
-      if(mount.contains(renderer.domElement))mount.removeChild(renderer.domElement);
+      el.removeEventListener("mousedown", onDown);
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseup", onUp);
+      el.removeEventListener("touchstart", onDown);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onUp);
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
       renderer.dispose();
     };
-  },[size]);
+  }, [size]);
 
   // Update 3D scene when board state changes
-  useEffect(()=>{
-    if(!threeRef.current)return;
-    const{scene,squareMeshes}=threeRef.current;
+  useEffect(function () {
+    if (!threeRef.current) return;
+    var _threeRef$current = threeRef.current,
+      scene = _threeRef$current.scene,
+      squareMeshes = _threeRef$current.squareMeshes;
     // Remove old pieces
-    const rem=[];scene.children.forEach(ch=>{if(ch.userData.isPiece)rem.push(ch)});
-    rem.forEach(g=>{scene.remove(g);g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&!o.material.shared)o.material.dispose()})});
+    var rem = [];
+    scene.children.forEach(function (ch) {
+      if (ch.userData.isPiece) rem.push(ch);
+    });
+    rem.forEach(function (g) {
+      scene.remove(g);
+      g.traverse(function (o) {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material && !o.material.shared) o.material.dispose();
+      });
+    });
     // Update square highlights
-    squareMeshes.forEach(mesh=>{
-      const{r,c,isLight,lc}=mesh.userData;
-      const isSel=selected&&selected[0]===r&&selected[1]===c;
-      const isLegal=legalMoves.some(m=>m.tr===r&&m.tc===c);
-      const isLM=lastMove&&((lastMove.fr===r&&lastMove.fc===c)||(lastMove.tr===r&&lastMove.tc===c));
-      if(isSel){mesh.material.color.setHex(0x1e8fb8);mesh.material.emissive.setHex(0x0a3a50);mesh.position.y=0.04}
-      else if(isLegal){mesh.material.color.setHex(lc);mesh.material.emissive.setHex(0x0c2838);mesh.position.y=0}
-      else if(isLM){mesh.material.color.setHex(isLight?0xd4c855:0x5a5200);mesh.material.emissive.setHex(0x000000);mesh.position.y=0}
-      else{mesh.material.color.setHex(lc);mesh.material.emissive.setHex(0x000000);mesh.position.y=0}
+    squareMeshes.forEach(function (mesh) {
+      var _mesh$userData = mesh.userData,
+        r = _mesh$userData.r,
+        c = _mesh$userData.c,
+        isLight = _mesh$userData.isLight,
+        lc = _mesh$userData.lc;
+      var isSel = selected && selected[0] === r && selected[1] === c;
+      var isLegal = legalMoves.some(function (m) {
+        return m.tr === r && m.tc === c;
+      });
+      var isLM = lastMove && (lastMove.fr === r && lastMove.fc === c || lastMove.tr === r && lastMove.tc === c);
+      if (isSel) {
+        mesh.material.color.setHex(0x1e8fb8);
+        mesh.material.emissive.setHex(0x0a3a50);
+        mesh.position.y = 0.04;
+      } else if (isLegal) {
+        mesh.material.color.setHex(lc);
+        mesh.material.emissive.setHex(0x0c2838);
+        mesh.position.y = 0;
+      } else if (isLM) {
+        mesh.material.color.setHex(isLight ? 0xd4c855 : 0x5a5200);
+        mesh.material.emissive.setHex(0x000000);
+        mesh.position.y = 0;
+      } else {
+        mesh.material.color.setHex(lc);
+        mesh.material.emissive.setHex(0x000000);
+        mesh.position.y = 0;
+      }
     });
     // Add pieces — placed on top of squares (square top = y=0.06, piece base at y=0.06)
-    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
-      const p=board[r][c];if(!p)continue;
-      const g=createPieceMesh(p.t,p.c==="w");
-      g.position.set(c-3.5,0.06,r-3.5);
-      g.userData.isPiece=true;scene.add(g);
+    for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+      var p = board[r][c];
+      if (!p) continue;
+      var g = createPieceMesh(p.t, p.c === "w");
+      g.position.set(c - 3.5, 0.06, r - 3.5);
+      g.userData.isPiece = true;
+      scene.add(g);
     }
-  },[board,selected,legalMoves,lastMove]);
-
-  return <div ref={mountRef} style={{width:size,height:size,borderRadius:10,overflow:"hidden"}}/>;
+  }, [board, selected, legalMoves, lastMove]);
+  return /*#__PURE__*/React.createElement("div", {
+    ref: mountRef,
+    style: {
+      width: size,
+      height: size,
+      borderRadius: 10,
+      overflow: "hidden"
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════
 //  LOVE MODAL
 // ═══════════════════════════════════════════════════════
-function LoveModal({onClose}){
-  useEffect(()=>{
-    const c=document.getElementById("confetti-container");if(!c)return;
-    const hearts=["💗","💖","🌹","💘","💕","🌸","✨","💝"];
-    const timers=[];
-    for(let i=0;i<30;i++){
-      const t=setTimeout(()=>{
-        const h=document.createElement("div");
-        h.className="love-heart-particle";
-        h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
-        const rot=(Math.random()-0.5)*60;
-        h.style.cssText=`left:${Math.random()*100}vw;bottom:-10px;--rot:${rot}deg;animation-delay:${Math.random()*2}s;font-size:${1+Math.random()*1.5}rem;animation-duration:${3+Math.random()*3}s`;
+function LoveModal(_ref4) {
+  var onClose = _ref4.onClose;
+  useEffect(function () {
+    var c = document.getElementById("confetti-container");
+    if (!c) return;
+    var hearts = ["💗", "💖", "🌹", "💘", "💕", "🌸", "✨", "💝"];
+    var timers = [];
+    for (var i = 0; i < 30; i++) {
+      var t = setTimeout(function () {
+        var h = document.createElement("div");
+        h.className = "love-heart-particle";
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        var rot = (Math.random() - 0.5) * 60;
+        h.style.cssText = "left:".concat(Math.random() * 100, "vw;bottom:-10px;--rot:").concat(rot, "deg;animation-delay:").concat(Math.random() * 2, "s;font-size:").concat(1 + Math.random() * 1.5, "rem;animation-duration:").concat(3 + Math.random() * 3, "s");
         c.appendChild(h);
-        setTimeout(()=>{if(c.contains(h))c.removeChild(h)},6000);
-      },i*120);
+        setTimeout(function () {
+          if (c.contains(h)) c.removeChild(h);
+        }, 6000);
+      }, i * 120);
       timers.push(t);
     }
-    return()=>{timers.forEach(clearTimeout)};
-  },[]);
-  return(
-    <div className="love-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div className="love-card">
-        <div className="love-rose">🌹</div>
-        <div className="love-to">— Para ECO —</div>
-        <div className="love-text">
-          No existe ningún algoritmo en el universo<br/>
-          capaz de <em>calcular</em> lo que siento por ti.<br/><br/>
-          Cada pieza en este tablero fue pensada<br/>
-          para verte <em>sonreír</em>.<br/><br/>
-          Eres mi jaque mate favorito.<br/><br/>
-          <em>Estoy enamorado de ti.</em> 💘
-        </div>
-        <div className="love-sign">— Josulo ♟️ —</div>
-        <button className="love-close" onClick={onClose}>Cerrar con amor 🌹</button>
-      </div>
-    </div>
-  );
+    return function () {
+      timers.forEach(clearTimeout);
+    };
+  }, []);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "love-overlay",
+    onClick: function onClick(e) {
+      if (e.target === e.currentTarget) onClose();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "love-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "love-rose"
+  }, "\uD83C\uDF39"), /*#__PURE__*/React.createElement("div", {
+    className: "love-to"
+  }, "\u2014 Para ECO \u2014"), /*#__PURE__*/React.createElement("div", {
+    className: "love-text"
+  }, "No existe ning\xFAn algoritmo en el universo", /*#__PURE__*/React.createElement("br", null), "capaz de ", /*#__PURE__*/React.createElement("em", null, "calcular"), " lo que siento por ti.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), "Cada pieza en este tablero fue pensada", /*#__PURE__*/React.createElement("br", null), "para verte ", /*#__PURE__*/React.createElement("em", null, "sonre\xEDr"), ".", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), "Eres mi jaque mate favorito.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, "Estoy enamorado de ti."), " \uD83D\uDC98"), /*#__PURE__*/React.createElement("div", {
+    className: "love-sign"
+  }, "\u2014 Josulo \u265F\uFE0F \u2014"), /*#__PURE__*/React.createElement("button", {
+    className: "love-close",
+    onClick: onClose
+  }, "Cerrar con amor \uD83C\uDF39")));
 }
 
 // ═══════════════════════════════════════════════════════
 //  LEARN MODAL
 // ═══════════════════════════════════════════════════════
-const PIECE_INFO=[
-  {symbol:"♙",name:"Peón",short:"Avanza 1 (o 2 desde el inicio). Captura en diagonal.",moves:[[1,1],[1,2],[1,3]],captures:[[0,1],[0,3]]},
-  {symbol:"♖",name:"Torre",short:"Mueve en línea recta cualquier distancia.",moves:[[0,2],[1,2],[3,2],[4,2],[2,0],[2,1],[2,3],[2,4]],captures:[]},
-  {symbol:"♘",name:"Caballo",short:"En L: 2+1 casillas. Salta piezas.",moves:[[0,1],[0,3],[1,0],[1,4],[3,0],[3,4],[4,1],[4,3]],captures:[]},
-  {symbol:"♗",name:"Alfil",short:"Mueve en diagonal. Siempre en el mismo color.",moves:[[0,0],[0,4],[1,1],[1,3],[3,1],[3,3],[4,0],[4,4]],captures:[]},
-  {symbol:"♕",name:"Dama",short:"Combina torre y alfil. La más poderosa.",moves:[[0,2],[1,1],[1,2],[1,3],[2,0],[2,1],[2,3],[2,4],[3,1],[3,2],[3,3],[4,0],[4,2],[4,4]],captures:[]},
-  {symbol:"♔",name:"Rey",short:"1 casilla en cualquier dirección. ¡Protégelo!",moves:[[1,1],[1,2],[1,3],[2,1],[2,3],[3,1],[3,2],[3,3]],captures:[]},
-];
-function MoveDiagram({info}){
-  const cells=[];
-  for(let r=0;r<5;r++)for(let c=0;c<5;c++){
-    const isCenter=r===2&&c===2,isMove=info.moves.some(([mr,mc])=>mr===r&&mc===c),isCap=info.captures.some(([mr,mc])=>mr===r&&mc===c),isLight=(r+c)%2===1;
-    cells.push(<div key={r+"-"+c} className={"pd-sq "+(isCenter?"pd-piece":isCap?"pd-capture":isMove?"pd-move":isLight?"pd-light":"pd-dark")}>{isCenter?info.symbol:""}</div>);
+var PIECE_INFO = [{
+  symbol: "♙",
+  name: "Peón",
+  "short": "Avanza 1 (o 2 desde el inicio). Captura en diagonal.",
+  moves: [[1, 1], [1, 2], [1, 3]],
+  captures: [[0, 1], [0, 3]]
+}, {
+  symbol: "♖",
+  name: "Torre",
+  "short": "Mueve en línea recta cualquier distancia.",
+  moves: [[0, 2], [1, 2], [3, 2], [4, 2], [2, 0], [2, 1], [2, 3], [2, 4]],
+  captures: []
+}, {
+  symbol: "♘",
+  name: "Caballo",
+  "short": "En L: 2+1 casillas. Salta piezas.",
+  moves: [[0, 1], [0, 3], [1, 0], [1, 4], [3, 0], [3, 4], [4, 1], [4, 3]],
+  captures: []
+}, {
+  symbol: "♗",
+  name: "Alfil",
+  "short": "Mueve en diagonal. Siempre en el mismo color.",
+  moves: [[0, 0], [0, 4], [1, 1], [1, 3], [3, 1], [3, 3], [4, 0], [4, 4]],
+  captures: []
+}, {
+  symbol: "♕",
+  name: "Dama",
+  "short": "Combina torre y alfil. La más poderosa.",
+  moves: [[0, 2], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 3], [2, 4], [3, 1], [3, 2], [3, 3], [4, 0], [4, 2], [4, 4]],
+  captures: []
+}, {
+  symbol: "♔",
+  name: "Rey",
+  "short": "1 casilla en cualquier dirección. ¡Protégelo!",
+  moves: [[1, 1], [1, 2], [1, 3], [2, 1], [2, 3], [3, 1], [3, 2], [3, 3]],
+  captures: []
+}];
+function MoveDiagram(_ref5) {
+  var info = _ref5.info;
+  var cells = [];
+  var _loop3 = function _loop3(r) {
+    var _loop4 = function _loop4(c) {
+      var isCenter = r === 2 && c === 2,
+        isMove = info.moves.some(function (_ref6) {
+          var _ref7 = _slicedToArray(_ref6, 2),
+            mr = _ref7[0],
+            mc = _ref7[1];
+          return mr === r && mc === c;
+        }),
+        isCap = info.captures.some(function (_ref8) {
+          var _ref9 = _slicedToArray(_ref8, 2),
+            mr = _ref9[0],
+            mc = _ref9[1];
+          return mr === r && mc === c;
+        }),
+        isLight = (r + c) % 2 === 1;
+      cells.push(/*#__PURE__*/React.createElement("div", {
+        key: r + "-" + c,
+        className: "pd-sq " + (isCenter ? "pd-piece" : isCap ? "pd-capture" : isMove ? "pd-move" : isLight ? "pd-light" : "pd-dark")
+      }, isCenter ? info.symbol : ""));
+    };
+    for (var c = 0; c < 5; c++) {
+      _loop4(c);
+    }
+  };
+  for (var r = 0; r < 5; r++) {
+    _loop3(r);
   }
-  return <div className="piece-diagram">{cells}</div>;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "piece-diagram"
+  }, cells);
 }
-function LearnModal({onClose}){
-  const[tab,setTab]=useState("piezas");
-  return(
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div className="modal-card">
-        <div className="modal-header"><span className="modal-title">APRENDER A JUGAR</span><button className="modal-close" onClick={onClose}>✕</button></div>
-        <div className="modal-tabs">
-          {[["piezas","♟ Piezas"],["reglas","⚖ Reglas"],["consejos","💡 Consejos"]].map(([k,l])=>(
-            <button key={k} className={"tab-btn"+(tab===k?" active":"")} onClick={()=>setTab(k)}>{l}</button>
-          ))}
-        </div>
-        <div className="modal-body">
-          {tab==="piezas"&&<div className="pieces-grid">{PIECE_INFO.map(info=>(<div className="piece-card" key={info.name}><MoveDiagram info={info}/><div className="piece-info"><h4>{info.symbol} {info.name}</h4><p>{info.short}</p></div></div>))}</div>}
-          {tab==="reglas"&&<>{[["♔ Jaque","El rey está amenazado. Debes protegerlo moviendo el rey, bloqueando el ataque o capturando la pieza."],["♚ Jaque Mate","El rey está en jaque y no puede escapar. ¡Fin de partida!"],["🤝 Tablas","Empate por rey ahogado, triple repetición o insuficiencia de material."],["🏰 Enroque","El rey avanza 2 casillas y la torre salta. Solo si ninguna pieza se ha movido antes."],["⚡ Al Paso","Un peón que avanza 2 puede ser capturado como si solo avanzara 1, solo en el turno siguiente."],["👑 Promoción","Cuando un peón llega al otro extremo, se convierte en cualquier pieza (normalmente dama)."]].map(([t,d])=>(<div className="rule-block" key={t}><div className="rule-title">{t}</div><div className="rule-text">{d}</div></div>))}</>}
-          {tab==="consejos"&&<>{[["Controla el centro","d4, d5, e4, e5 son las casillas clave. Quien las domina, controla el juego."],["Desarrolla tus piezas","Saca caballos y alfiles antes que la dama. Cada pieza necesita un rol activo."],["Protege al rey","Enroca temprano para ponerlo a salvo detrás de los peones."],["No repitas piezas en apertura","Cada movimiento debe desarrollar algo nuevo, no mover la misma pieza dos veces."],["Piensa antes de capturar","¿Vale la pena? Calcula qué ganas y qué pierdes."],["Busca amenazas dobles","Un ataque que amenaza dos cosas a la vez es casi siempre ganador."]].map(([t,d],i)=>(<div className="tip" key={i}><div className="tip-num">{i+1}</div><div className="tip-text"><strong style={{color:"#e2e8f0"}}>{t}.</strong> {d}</div></div>))}</>}
-        </div>
-      </div>
-    </div>
-  );
+function LearnModal(_ref0) {
+  var onClose = _ref0.onClose;
+  var _useState = useState("piezas"),
+    _useState2 = _slicedToArray(_useState, 2),
+    tab = _useState2[0],
+    setTab = _useState2[1];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onClick: function onClick(e) {
+      if (e.target === e.currentTarget) onClose();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-header"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "modal-title"
+  }, "APRENDER A JUGAR"), /*#__PURE__*/React.createElement("button", {
+    className: "modal-close",
+    onClick: onClose
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "modal-tabs"
+  }, [["piezas", "♟ Piezas"], ["reglas", "⚖ Reglas"], ["consejos", "💡 Consejos"]].map(function (_ref1) {
+    var _ref10 = _slicedToArray(_ref1, 2),
+      k = _ref10[0],
+      l = _ref10[1];
+    return /*#__PURE__*/React.createElement("button", {
+      key: k,
+      className: "tab-btn" + (tab === k ? " active" : ""),
+      onClick: function onClick() {
+        return setTab(k);
+      }
+    }, l);
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, tab === "piezas" && /*#__PURE__*/React.createElement("div", {
+    className: "pieces-grid"
+  }, PIECE_INFO.map(function (info) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "piece-card",
+      key: info.name
+    }, /*#__PURE__*/React.createElement(MoveDiagram, {
+      info: info
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "piece-info"
+    }, /*#__PURE__*/React.createElement("h4", null, info.symbol, " ", info.name), /*#__PURE__*/React.createElement("p", null, info["short"])));
+  })), tab === "reglas" && /*#__PURE__*/React.createElement(React.Fragment, null, [["♔ Jaque", "El rey está amenazado. Debes protegerlo moviendo el rey, bloqueando el ataque o capturando la pieza."], ["♚ Jaque Mate", "El rey está en jaque y no puede escapar. ¡Fin de partida!"], ["🤝 Tablas", "Empate por rey ahogado, triple repetición o insuficiencia de material."], ["🏰 Enroque", "El rey avanza 2 casillas y la torre salta. Solo si ninguna pieza se ha movido antes."], ["⚡ Al Paso", "Un peón que avanza 2 puede ser capturado como si solo avanzara 1, solo en el turno siguiente."], ["👑 Promoción", "Cuando un peón llega al otro extremo, se convierte en cualquier pieza (normalmente dama)."]].map(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 2),
+      t = _ref12[0],
+      d = _ref12[1];
+    return /*#__PURE__*/React.createElement("div", {
+      className: "rule-block",
+      key: t
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "rule-title"
+    }, t), /*#__PURE__*/React.createElement("div", {
+      className: "rule-text"
+    }, d));
+  })), tab === "consejos" && /*#__PURE__*/React.createElement(React.Fragment, null, [["Controla el centro", "d4, d5, e4, e5 son las casillas clave. Quien las domina, controla el juego."], ["Desarrolla tus piezas", "Saca caballos y alfiles antes que la dama. Cada pieza necesita un rol activo."], ["Protege al rey", "Enroca temprano para ponerlo a salvo detrás de los peones."], ["No repitas piezas en apertura", "Cada movimiento debe desarrollar algo nuevo, no mover la misma pieza dos veces."], ["Piensa antes de capturar", "¿Vale la pena? Calcula qué ganas y qué pierdes."], ["Busca amenazas dobles", "Un ataque que amenaza dos cosas a la vez es casi siempre ganador."]].map(function (_ref13, i) {
+    var _ref14 = _slicedToArray(_ref13, 2),
+      t = _ref14[0],
+      d = _ref14[1];
+    return /*#__PURE__*/React.createElement("div", {
+      className: "tip",
+      key: i
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "tip-num"
+    }, i + 1), /*#__PURE__*/React.createElement("div", {
+      className: "tip-text"
+    }, /*#__PURE__*/React.createElement("strong", {
+      style: {
+        color: "#e2e8f0"
+      }
+    }, t, "."), " ", d));
+  })))));
 }
 
 // ═══════════════════════════════════════════════════════
 //  CONFETTI + PHRASES
 // ═══════════════════════════════════════════════════════
-function launchConfetti(){
-  const c=document.getElementById("confetti-container");if(!c)return;c.innerHTML="";
-  const cols=["#38bdf8","#f472b6","#facc15","#4ade80","#c084fc","#fb923c"];
-  for(let i=0;i<110;i++){const p=document.createElement("div");const sz=Math.random()*8+4;p.style.cssText=`position:fixed;left:${Math.random()*100}vw;top:-20px;width:${sz}px;height:${sz*1.5}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?"50%":"2px"};animation:confettiFall ${Math.random()*2+2}s ease-in forwards;animation-delay:${Math.random()*.8}s;opacity:.9;z-index:9999;pointer-events:none`;c.appendChild(p)}
-  setTimeout(()=>{c.innerHTML=""},5000);
+function launchConfetti() {
+  var c = document.getElementById("confetti-container");
+  if (!c) return;
+  c.innerHTML = "";
+  var cols = ["#38bdf8", "#f472b6", "#facc15", "#4ade80", "#c084fc", "#fb923c"];
+  for (var i = 0; i < 110; i++) {
+    var p = document.createElement("div");
+    var sz = Math.random() * 8 + 4;
+    p.style.cssText = "position:fixed;left:".concat(Math.random() * 100, "vw;top:-20px;width:").concat(sz, "px;height:").concat(sz * 1.5, "px;background:").concat(cols[Math.floor(Math.random() * cols.length)], ";border-radius:").concat(Math.random() > .5 ? "50%" : "2px", ";animation:confettiFall ").concat(Math.random() * 2 + 2, "s ease-in forwards;animation-delay:").concat(Math.random() * .8, "s;opacity:.9;z-index:9999;pointer-events:none");
+    c.appendChild(p);
+  }
+  setTimeout(function () {
+    c.innerHTML = "";
+  }, 5000);
 }
-const J_THINK=["Josulo piensa... en ti 💭","Analizando el tablero... y tu sonrisa 👀","Calculando variantes... y excusas para hablar contigo","Consultando el corazón... digo, el motor 🤖"];
-const J_AFTER=["Interesante jugada, ECO... como tu mirada ♟️","Josulo contraataca con elegancia 😏","¿Viste eso? Puro talento natural 💅","Mi mejor movimiento fue encontrarte en este tablero","Jaque... a tu corazón 💘"];
-const J_CHECK=["¡Jaque! Pero solo quiero tu atención 👑","¡Jaque! Mi rey siempre serás tú, ECO"];
-const J_CAP=["Capturé tu pieza... pero nunca tu libertad 🌹","¿Me perdonas la captura con un café? ☕"];
-const J_CHAT=["Me encanta cómo piensas, ECO 🥰","¿Me estás distrayendo? Funciona bien 😏","Cada mensaje tuyo vale más que una dama 👑"];
-const DIFF_DATA=[{icon:"🌹",name:"Romántico"},{icon:"😊",name:"Casual"},{icon:"♟️",name:"Jugador"},{icon:"🧠",name:"Avanzado"},{icon:"👑",name:"Maestro"}];
-function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+var J_THINK = ["Josulo piensa... en ti 💭", "Analizando el tablero... y tu sonrisa 👀", "Calculando variantes... y excusas para hablar contigo", "Consultando el corazón... digo, el motor 🤖"];
+var J_AFTER = ["Interesante jugada, ECO... como tu mirada ♟️", "Josulo contraataca con elegancia 😏", "¿Viste eso? Puro talento natural 💅", "Mi mejor movimiento fue encontrarte en este tablero", "Jaque... a tu corazón 💘"];
+var J_CHECK = ["¡Jaque! Pero solo quiero tu atención 👑", "¡Jaque! Mi rey siempre serás tú, ECO"];
+var J_CAP = ["Capturé tu pieza... pero nunca tu libertad 🌹", "¿Me perdonas la captura con un café? ☕"];
+var J_CHAT = ["Me encanta cómo piensas, ECO 🥰", "¿Me estás distrayendo? Funciona bien 😏", "Cada mensaje tuyo vale más que una dama 👑"];
+var DIFF_DATA = [{
+  icon: "🌹",
+  name: "Romántico"
+}, {
+  icon: "😊",
+  name: "Casual"
+}, {
+  icon: "♟️",
+  name: "Jugador"
+}, {
+  icon: "🧠",
+  name: "Avanzado"
+}, {
+  icon: "👑",
+  name: "Maestro"
+}];
+function rnd(a) {
+  return a[Math.floor(Math.random() * a.length)];
+}
 
 // ═══════════════════════════════════════════════════════
 //  MAIN APP
 // ═══════════════════════════════════════════════════════
-function App(){
-  const[board,setBoard]=useState(initialBoard);
-  const[turn,setTurn]=useState("w");
-  const[castling,setCastling]=useState({wK:true,wQ:true,bK:true,bQ:true});
-  const[enPassant,setEnPassant]=useState(null);
-  const[lastMove,setLastMove]=useState(null);
-  const[gameOver,setGameOver]=useState(null);
-  const[selected,setSelected]=useState(null);
-  const[legalMoves,setLegalMoves]=useState([]);
-  const[playerName,setPlayerName]=useState("");
-  const[isStarted,setIsStarted]=useState(false);
-  const[isJosulo,setIsJosulo]=useState(false);
-  const[messages,setMessages]=useState([]);
-  const[inputMsg,setInputMsg]=useState("");
-  const[status,setStatus]=useState("");
-  const[timerEco,setTimerEco]=useState(600);
-  const[timerJosulo,setTimerJosulo]=useState(600);
-  const[moveCount,setMoveCount]=useState(0);
-  const[difficulty,setDifficulty]=useState(2);
-  const[viewMode,setViewMode]=useState("2d");
-  const[showLearn,setShowLearn]=useState(false);
-  const[showLove,setShowLove]=useState(false);
-  const chatRef=useRef(null);
-  useEffect(()=>{if(chatRef.current)chatRef.current.scrollTop=chatRef.current.scrollHeight},[messages]);
-
-  useEffect(()=>{
-    if(!isStarted||gameOver)return;
-    const iv=setInterval(()=>{
-      if(turn==="w")setTimerEco(t=>{if(t<=1){setGameOver({type:"timeout",winner:"Josulo"});return 0}return t-1});
-      else setTimerJosulo(t=>{if(t<=1){setGameOver({type:"timeout",winner:"ECO"});return 0}return t-1});
-    },1000);
-    return()=>clearInterval(iv);
-  },[isStarted,turn,gameOver]);
-
-  const fmt=t=>`${Math.floor(t/60)}:${(t%60).toString().padStart(2,"0")}`;
-
-  const execMove=useCallback((move,cb,cc,ce,ct)=>{
-    const nb=applyMove(cb,move);const nc={...cc};const piece=cb[move.fr][move.fc];
-    if(piece.t==="k"){nc[piece.c+"K"]=false;nc[piece.c+"Q"]=false}
-    if(piece.t==="r"){if(move.fc===0)nc[piece.c+"Q"]=false;if(move.fc===7)nc[piece.c+"K"]=false}
-    if(move.tr===0&&move.tc===0)nc.bQ=false;if(move.tr===0&&move.tc===7)nc.bK=false;
-    if(move.tr===7&&move.tc===0)nc.wQ=false;if(move.tr===7&&move.tc===7)nc.wK=false;
-    let ne=null;if(piece.t==="p"&&Math.abs(move.tr-move.fr)===2)ne=[(move.fr+move.tr)/2,move.fc];
-    const nt=ct==="w"?"b":"w";const nl=getLegalMoves(nb,nt,nc,ne);
-    setBoard(nb);setCastling(nc);setEnPassant(ne);setTurn(nt);setLastMove(move);setSelected(null);setLegalMoves([]);setMoveCount(m=>m+1);
-    if(nl.length===0){if(isInCheck(nb,nt)){const w=nt==="w"?"Josulo":"ECO";setGameOver({type:"checkmate",winner:w});launchConfetti()}else setGameOver({type:"stalemate"})}
-    else if(isInCheck(nb,nt))setStatus(nt==="w"?"¡Jaque! Tu turno, ECO 👑":"¡Josulo en jaque!");
-    return{nb,nc,ne,nt,captured:!!cb[move.tr][move.tc]||move.ep,inCheck:isInCheck(nb,nt)};
-  },[]);
-
-  const handleCellClick=useCallback((r,c)=>{
-    if(gameOver||turn!=="w")return;const piece=board[r][c];
-    if(selected){
-      const move=legalMoves.find(m=>m.tr===r&&m.tc===c);
-      if(move){execMove(move,board,castling,enPassant,turn);return}
-      if(piece&&piece.c==="w"){setSelected([r,c]);setLegalMoves(getLegalMoves(board,"w",castling,enPassant).filter(m=>m.fr===r&&m.fc===c));return}
-      setSelected(null);setLegalMoves([]);
-    }else{if(piece&&piece.c==="w"){setSelected([r,c]);setLegalMoves(getLegalMoves(board,"w",castling,enPassant).filter(m=>m.fr===r&&m.fc===c))}}
-  },[board,selected,legalMoves,turn,castling,enPassant,gameOver,execMove]);
-
-  useEffect(()=>{
-    if(!isJosulo||turn!=="b"||gameOver)return;
-    const delay=difficulty<=2?Math.floor(Math.random()*1200)+900:Math.floor(Math.random()*800)+1600;
-    const to=setTimeout(()=>{
-      const move=getBestMove(board,"b",castling,enPassant,difficulty);if(!move)return;
-      const res=execMove(move,board,castling,enPassant,turn);
-      let phrase;if(res.inCheck)phrase=rnd(J_CHECK);else if(res.captured)phrase=rnd(J_CAP);else phrase=rnd(J_AFTER);
-      setMessages(ms=>[...ms,{sender:"Josulo",text:phrase}]);setStatus("Tu turno, ECO ♟️");
-    },delay);
-    return()=>clearTimeout(to);
-  },[turn,isJosulo,gameOver,board,castling,enPassant,difficulty,execMove]);
-
-  const handleStart=()=>{
-    const n=playerName.trim().toLowerCase();
-    if(n==="josulo chess"||n==="josulo"){setIsJosulo(true);setMessages([{sender:"Sistema",text:"🎮 Modo Josulo activado."},{sender:"Josulo",text:"Hola ECO... ¿lista para perder? ...el miedo, claro 😏"}])}
-    else setMessages([{sender:"Sistema",text:`Bienvenid@ al tablero, ${playerName||"ECO"} · ${DIFF_DATA[difficulty-1].icon} ${DIFF_DATA[difficulty-1].name}`}]);
-    setStatus("Tu turno, ECO ♟️");setIsStarted(true);
+function App() {
+  var _useState3 = useState(initialBoard),
+    _useState4 = _slicedToArray(_useState3, 2),
+    board = _useState4[0],
+    setBoard = _useState4[1];
+  var _useState5 = useState("w"),
+    _useState6 = _slicedToArray(_useState5, 2),
+    turn = _useState6[0],
+    setTurn = _useState6[1];
+  var _useState7 = useState({
+      wK: true,
+      wQ: true,
+      bK: true,
+      bQ: true
+    }),
+    _useState8 = _slicedToArray(_useState7, 2),
+    castling = _useState8[0],
+    setCastling = _useState8[1];
+  var _useState9 = useState(null),
+    _useState0 = _slicedToArray(_useState9, 2),
+    enPassant = _useState0[0],
+    setEnPassant = _useState0[1];
+  var _useState1 = useState(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    lastMove = _useState10[0],
+    setLastMove = _useState10[1];
+  var _useState11 = useState(null),
+    _useState12 = _slicedToArray(_useState11, 2),
+    gameOver = _useState12[0],
+    setGameOver = _useState12[1];
+  var _useState13 = useState(null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    selected = _useState14[0],
+    setSelected = _useState14[1];
+  var _useState15 = useState([]),
+    _useState16 = _slicedToArray(_useState15, 2),
+    legalMoves = _useState16[0],
+    setLegalMoves = _useState16[1];
+  var _useState17 = useState(""),
+    _useState18 = _slicedToArray(_useState17, 2),
+    playerName = _useState18[0],
+    setPlayerName = _useState18[1];
+  var _useState19 = useState(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    isStarted = _useState20[0],
+    setIsStarted = _useState20[1];
+  var _useState21 = useState(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    isJosulo = _useState22[0],
+    setIsJosulo = _useState22[1];
+  var _useState23 = useState([]),
+    _useState24 = _slicedToArray(_useState23, 2),
+    messages = _useState24[0],
+    setMessages = _useState24[1];
+  var _useState25 = useState(""),
+    _useState26 = _slicedToArray(_useState25, 2),
+    inputMsg = _useState26[0],
+    setInputMsg = _useState26[1];
+  var _useState27 = useState(""),
+    _useState28 = _slicedToArray(_useState27, 2),
+    status = _useState28[0],
+    setStatus = _useState28[1];
+  var _useState29 = useState(600),
+    _useState30 = _slicedToArray(_useState29, 2),
+    timerEco = _useState30[0],
+    setTimerEco = _useState30[1];
+  var _useState31 = useState(600),
+    _useState32 = _slicedToArray(_useState31, 2),
+    timerJosulo = _useState32[0],
+    setTimerJosulo = _useState32[1];
+  var _useState33 = useState(0),
+    _useState34 = _slicedToArray(_useState33, 2),
+    moveCount = _useState34[0],
+    setMoveCount = _useState34[1];
+  var _useState35 = useState(2),
+    _useState36 = _slicedToArray(_useState35, 2),
+    difficulty = _useState36[0],
+    setDifficulty = _useState36[1];
+  var _useState37 = useState("2d"),
+    _useState38 = _slicedToArray(_useState37, 2),
+    viewMode = _useState38[0],
+    setViewMode = _useState38[1];
+  var _useState39 = useState(false),
+    _useState40 = _slicedToArray(_useState39, 2),
+    showLearn = _useState40[0],
+    setShowLearn = _useState40[1];
+  var _useState41 = useState(false),
+    _useState42 = _slicedToArray(_useState41, 2),
+    showLove = _useState42[0],
+    setShowLove = _useState42[1];
+  var chatRef = useRef(null);
+  useEffect(function () {
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+  }, [messages]);
+  useEffect(function () {
+    if (!isStarted || gameOver) return;
+    var iv = setInterval(function () {
+      if (turn === "w") setTimerEco(function (t) {
+        if (t <= 1) {
+          setGameOver({
+            type: "timeout",
+            winner: "Josulo"
+          });
+          return 0;
+        }
+        return t - 1;
+      });else setTimerJosulo(function (t) {
+        if (t <= 1) {
+          setGameOver({
+            type: "timeout",
+            winner: "ECO"
+          });
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return function () {
+      return clearInterval(iv);
+    };
+  }, [isStarted, turn, gameOver]);
+  var fmt = function fmt(t) {
+    return "".concat(Math.floor(t / 60), ":").concat((t % 60).toString().padStart(2, "0"));
   };
-  const handleRestart=()=>{
-    setBoard(initialBoard());setTurn("w");setCastling({wK:true,wQ:true,bK:true,bQ:true});
-    setEnPassant(null);setLastMove(null);setGameOver(null);setSelected(null);setLegalMoves([]);
-    setTimerEco(600);setTimerJosulo(600);setMoveCount(0);setStatus("Tu turno, ECO ♟️");
-    setMessages(ms=>[...ms,{sender:"Sistema",text:"♻️ Nueva partida. ¡Adelante!"}]);
-    if(isJosulo)setTimeout(()=>setMessages(ms=>[...ms,{sender:"Josulo",text:"¿Otra ronda? No me canso de jugar contigo 😏"}]),400);
+  var execMove = useCallback(function (move, cb, cc, ce, ct) {
+    var nb = applyMove(cb, move);
+    var nc = _objectSpread({}, cc);
+    var piece = cb[move.fr][move.fc];
+    if (piece.t === "k") {
+      nc[piece.c + "K"] = false;
+      nc[piece.c + "Q"] = false;
+    }
+    if (piece.t === "r") {
+      if (move.fc === 0) nc[piece.c + "Q"] = false;
+      if (move.fc === 7) nc[piece.c + "K"] = false;
+    }
+    if (move.tr === 0 && move.tc === 0) nc.bQ = false;
+    if (move.tr === 0 && move.tc === 7) nc.bK = false;
+    if (move.tr === 7 && move.tc === 0) nc.wQ = false;
+    if (move.tr === 7 && move.tc === 7) nc.wK = false;
+    var ne = null;
+    if (piece.t === "p" && Math.abs(move.tr - move.fr) === 2) ne = [(move.fr + move.tr) / 2, move.fc];
+    var nt = ct === "w" ? "b" : "w";
+    var nl = getLegalMoves(nb, nt, nc, ne);
+    setBoard(nb);
+    setCastling(nc);
+    setEnPassant(ne);
+    setTurn(nt);
+    setLastMove(move);
+    setSelected(null);
+    setLegalMoves([]);
+    setMoveCount(function (m) {
+      return m + 1;
+    });
+    if (nl.length === 0) {
+      if (isInCheck(nb, nt)) {
+        var w = nt === "w" ? "Josulo" : "ECO";
+        setGameOver({
+          type: "checkmate",
+          winner: w
+        });
+        launchConfetti();
+      } else setGameOver({
+        type: "stalemate"
+      });
+    } else if (isInCheck(nb, nt)) setStatus(nt === "w" ? "¡Jaque! Tu turno, ECO 👑" : "¡Josulo en jaque!");
+    return {
+      nb: nb,
+      nc: nc,
+      ne: ne,
+      nt: nt,
+      captured: !!cb[move.tr][move.tc] || move.ep,
+      inCheck: isInCheck(nb, nt)
+    };
+  }, []);
+  var handleCellClick = useCallback(function (r, c) {
+    if (gameOver || turn !== "w") return;
+    var piece = board[r][c];
+    if (selected) {
+      var move = legalMoves.find(function (m) {
+        return m.tr === r && m.tc === c;
+      });
+      if (move) {
+        execMove(move, board, castling, enPassant, turn);
+        return;
+      }
+      if (piece && piece.c === "w") {
+        setSelected([r, c]);
+        setLegalMoves(getLegalMoves(board, "w", castling, enPassant).filter(function (m) {
+          return m.fr === r && m.fc === c;
+        }));
+        return;
+      }
+      setSelected(null);
+      setLegalMoves([]);
+    } else {
+      if (piece && piece.c === "w") {
+        setSelected([r, c]);
+        setLegalMoves(getLegalMoves(board, "w", castling, enPassant).filter(function (m) {
+          return m.fr === r && m.fc === c;
+        }));
+      }
+    }
+  }, [board, selected, legalMoves, turn, castling, enPassant, gameOver, execMove]);
+  useEffect(function () {
+    if (!isJosulo || turn !== "b" || gameOver) return;
+    var delay = difficulty <= 2 ? Math.floor(Math.random() * 1200) + 900 : Math.floor(Math.random() * 800) + 1600;
+    var to = setTimeout(function () {
+      var move = getBestMove(board, "b", castling, enPassant, difficulty);
+      if (!move) return;
+      var res = execMove(move, board, castling, enPassant, turn);
+      var phrase;
+      if (res.inCheck) phrase = rnd(J_CHECK);else if (res.captured) phrase = rnd(J_CAP);else phrase = rnd(J_AFTER);
+      setMessages(function (ms) {
+        return [].concat(_toConsumableArray(ms), [{
+          sender: "Josulo",
+          text: phrase
+        }]);
+      });
+      setStatus("Tu turno, ECO ♟️");
+    }, delay);
+    return function () {
+      return clearTimeout(to);
+    };
+  }, [turn, isJosulo, gameOver, board, castling, enPassant, difficulty, execMove]);
+  var handleStart = function handleStart() {
+    var n = playerName.trim().toLowerCase();
+    if (n === "josulo chess" || n === "josulo") {
+      setIsJosulo(true);
+      setMessages([{
+        sender: "Sistema",
+        text: "🎮 Modo Josulo activado."
+      }, {
+        sender: "Josulo",
+        text: "Hola ECO... ¿lista para perder? ...el miedo, claro 😏"
+      }]);
+    } else setMessages([{
+      sender: "Sistema",
+      text: "Bienvenid@ al tablero, ".concat(playerName || "ECO", " \xB7 ").concat(DIFF_DATA[difficulty - 1].icon, " ").concat(DIFF_DATA[difficulty - 1].name)
+    }]);
+    setStatus("Tu turno, ECO ♟️");
+    setIsStarted(true);
   };
-
-  const files=["a","b","c","d","e","f","g","h"],ranks=["8","7","6","5","4","3","2","1"];
-  const bSize=Math.min(480,typeof window!=="undefined"?window.innerWidth-(window.innerWidth>900?360:30):480);
-  const cellSize=bSize/8;
+  var handleRestart = function handleRestart() {
+    setBoard(initialBoard());
+    setTurn("w");
+    setCastling({
+      wK: true,
+      wQ: true,
+      bK: true,
+      bQ: true
+    });
+    setEnPassant(null);
+    setLastMove(null);
+    setGameOver(null);
+    setSelected(null);
+    setLegalMoves([]);
+    setTimerEco(600);
+    setTimerJosulo(600);
+    setMoveCount(0);
+    setStatus("Tu turno, ECO ♟️");
+    setMessages(function (ms) {
+      return [].concat(_toConsumableArray(ms), [{
+        sender: "Sistema",
+        text: "♻️ Nueva partida. ¡Adelante!"
+      }]);
+    });
+    if (isJosulo) setTimeout(function () {
+      return setMessages(function (ms) {
+        return [].concat(_toConsumableArray(ms), [{
+          sender: "Josulo",
+          text: "¿Otra ronda? No me canso de jugar contigo 😏"
+        }]);
+      });
+    }, 400);
+  };
+  var files = ["a", "b", "c", "d", "e", "f", "g", "h"],
+    ranks = ["8", "7", "6", "5", "4", "3", "2", "1"];
+  var bSize = Math.min(480, typeof window !== "undefined" ? window.innerWidth - (window.innerWidth > 900 ? 360 : 30) : 480);
+  var cellSize = bSize / 8;
 
   // ── LOGIN ──
-  if(!isStarted)return(
-    <div className="login-screen">
-      {showLearn&&<LearnModal onClose={()=>setShowLearn(false)}/>}
-      {showLove&&<LoveModal onClose={()=>setShowLove(false)}/>}
-      <div className="login-card">
-        <div className="logo-3d-wrap"><span className="logo-eco">ECO</span></div>
-        <p className="tagline">Estrategia & Amor</p>
-        <div className="version-badge">v 3.0</div>
-        <div className="section-label">Tu nombre</div>
-        <input className="login-input" type="text" placeholder="¿Cómo te llamas?" value={playerName}
-          onChange={e=>setPlayerName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleStart()}/>
-        <div className="section-label" style={{marginTop:12}}>Dificultad</div>
-        <div className="diff-row">
-          {DIFF_DATA.map((d,i)=>(
-            <div key={i} className={"diff-card"+(difficulty===i+1?" active":"")} onClick={()=>setDifficulty(i+1)}>
-              <div className="diff-icon">{d.icon}</div>
-              <div className="diff-name">{d.name}</div>
-            </div>
-          ))}
-        </div>
-        <button className="login-btn" onClick={handleStart}>Entrar al Tablero →</button>
-        <button className="eco-love-btn" onClick={()=>setShowLove(true)}>
-          ✉ ECO — pulsa aquí
-        </button>
-        <div className="hint-row">
-          <span className="hint">Escribe "josulo" para modo especial 🤫</span>
-          <span className="learn-link" onClick={()=>setShowLearn(true)}>📖 Aprender</span>
-        </div>
-      </div>
-    </div>
-  );
+  if (!isStarted) return /*#__PURE__*/React.createElement("div", {
+    className: "login-screen"
+  }, showLearn && /*#__PURE__*/React.createElement(LearnModal, {
+    onClose: function onClose() {
+      return setShowLearn(false);
+    }
+  }), showLove && /*#__PURE__*/React.createElement(LoveModal, {
+    onClose: function onClose() {
+      return setShowLove(false);
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "login-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "logo-3d-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "logo-eco"
+  }, "ECO")), /*#__PURE__*/React.createElement("p", {
+    className: "tagline"
+  }, "Estrategia & Amor"), /*#__PURE__*/React.createElement("div", {
+    className: "version-badge"
+  }, "v 3.0"), /*#__PURE__*/React.createElement("div", {
+    className: "section-label"
+  }, "Tu nombre"), /*#__PURE__*/React.createElement("input", {
+    className: "login-input",
+    type: "text",
+    placeholder: "\xBFC\xF3mo te llamas?",
+    value: playerName,
+    onChange: function onChange(e) {
+      return setPlayerName(e.target.value);
+    },
+    onKeyDown: function onKeyDown(e) {
+      return e.key === "Enter" && handleStart();
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "section-label",
+    style: {
+      marginTop: 12
+    }
+  }, "Dificultad"), /*#__PURE__*/React.createElement("div", {
+    className: "diff-row"
+  }, DIFF_DATA.map(function (d, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "diff-card" + (difficulty === i + 1 ? " active" : ""),
+      onClick: function onClick() {
+        return setDifficulty(i + 1);
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "diff-icon"
+    }, d.icon), /*#__PURE__*/React.createElement("div", {
+      className: "diff-name"
+    }, d.name));
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "login-btn",
+    onClick: handleStart
+  }, "Entrar al Tablero \u2192"), /*#__PURE__*/React.createElement("button", {
+    className: "eco-love-btn",
+    onClick: function onClick() {
+      return setShowLove(true);
+    }
+  }, "\u2709 ECO \u2014 pulsa aqu\xED"), /*#__PURE__*/React.createElement("div", {
+    className: "hint-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "hint"
+  }, "Escribe \"josulo\" para modo especial \uD83E\uDD2B"), /*#__PURE__*/React.createElement("span", {
+    className: "learn-link",
+    onClick: function onClick() {
+      return setShowLearn(true);
+    }
+  }, "\uD83D\uDCD6 Aprender"))));
 
   // ── GAME ──
-  return(
-    <div className="app-container">
-      {showLearn&&<LearnModal onClose={()=>setShowLearn(false)}/>}
-      {showLove&&<LoveModal onClose={()=>setShowLove(false)}/>}
-      <div className="layout">
-        <div className="board-section">
-          <div className={`timer timer-josulo${turn==="b"&&!gameOver?" timer-active":""}`}>{fmt(timerJosulo)} <span className="timer-label">JOSULO</span></div>
-          <div className="board-controls">
-            <div className="view-toggle">
-              <button className={"view-btn"+(viewMode==="2d"?" active":"")} onClick={()=>setViewMode("2d")}>2D</button>
-              <button className={"view-btn"+(viewMode==="3d"?" active":"")} onClick={()=>setViewMode("3d")}>3D</button>
-            </div>
-            <div className="diff-badge">{DIFF_DATA[difficulty-1].icon} {DIFF_DATA[difficulty-1].name}</div>
-            <button className="learn-btn-game" onClick={()=>setShowLearn(true)}>📖</button>
-            <button className="eco-btn-game" onClick={()=>setShowLove(true)}>ECO ♥</button>
-          </div>
-          <div className="status-bar">{status}</div>
-
-          {viewMode==="2d"?(
-            <div className="board-outer">
-              <div className="board-grid" style={{width:bSize,height:bSize}}>
-                {board.map((row,r)=>row.map((cell,c)=>{
-                  const isLight=(r+c)%2===1;const isSel=selected&&selected[0]===r&&selected[1]===c;
-                  const isLegal=legalMoves.some(m=>m.tr===r&&m.tc===c);const isCapL=isLegal&&cell!==null;
-                  const isLM=lastMove&&((lastMove.fr===r&&lastMove.fc===c)||(lastMove.tr===r&&lastMove.tc===c));
-                  const pk=cell?cell.c+cell.t.toUpperCase():null;
-                  let cls="cell "+(isLight?"cell-light":"cell-dark");
-                  if(isSel)cls+=" cell-selected";else if(isLM)cls+=" "+(isLight?"cell-lastmove-light":"cell-lastmove-dark");
-                  return(
-                    <div key={r+"-"+c} className={cls} style={{width:cellSize,height:cellSize,fontSize:cellSize*.7}} onClick={()=>handleCellClick(r,c)}>
-                      {c===0&&<span className="coord coord-rank">{ranks[r]}</span>}
-                      {r===7&&<span className="coord coord-file">{files[c]}</span>}
-                      {isLegal&&!isCapL&&<div className="legal-dot"/>}
-                      {isCapL&&<div className="legal-capture"/>}
-                      {cell&&<span className="piece">{PIECES[pk]}</span>}
-                    </div>
-                  );
-                }))}
-              </div>
-            </div>
-          ):(
-            <div className="board-3d-wrap" style={{width:bSize,height:bSize}}>
-              <Board3D board={board} selected={selected} legalMoves={legalMoves} lastMove={lastMove} onCellClick={handleCellClick} size={bSize}/>
-            </div>
-          )}
-
-          <div className={`timer timer-eco${turn==="w"&&!gameOver?" timer-active":""}`}>{fmt(timerEco)} <span className="timer-label">ECO</span></div>
-        </div>
-
-        <div className="chat-section">
-          <div className="chat-header">MENSAJES</div>
-          <div className="chat-messages" ref={chatRef}>
-            {messages.map((m,i)=>{const sc=m.sender.toLowerCase();return(
-              <div key={i} className={`msg msg-${sc==="josulo"?"josulo":sc==="eco"?"eco":"sistema"}`}>
-                <div className={`msg-sender msg-sender-${sc==="josulo"?"josulo":sc==="eco"?"eco":"sistema"}`}>{m.sender}</div>
-                {m.text}
-              </div>
-            )})}
-          </div>
-          <form className="chat-input-area" onSubmit={e=>{e.preventDefault();if(!inputMsg.trim())return;setMessages(ms=>[...ms,{sender:"ECO",text:inputMsg}]);setInputMsg("");if(isJosulo)setTimeout(()=>setMessages(ms=>[...ms,{sender:"Josulo",text:rnd(J_CHAT)}]),1300)}}>
-            <input className="chat-input" value={inputMsg} onChange={e=>setInputMsg(e.target.value)} placeholder="Escribe aquí..."/>
-            <button type="submit" className="send-btn">→</button>
-          </form>
-        </div>
-      </div>
-
-      {gameOver&&(
-        <div className="end-overlay">
-          <div className="end-card">
-            <div style={{fontSize:"3rem",marginBottom:12}}>{gameOver.type==="checkmate"?"♔":gameOver.type==="timeout"?"⏱️":"🤝"}</div>
-            <h2>{gameOver.type==="checkmate"?"¡Jaque Mate!":gameOver.type==="timeout"?"¡Tiempo agotado!":"Tablas"}</h2>
-            <p className="sub">{gameOver.winner?(gameOver.winner==="ECO"?"Has ganado... mi corazón 💘":isJosulo?"Josulo gana... pero tú ganas su admiración":"Las negras ganan"):"Empate de estrategas"}</p>
-            <p className="stats">{moveCount} movimientos · {fmt(600-timerEco)} jugados · {DIFF_DATA[difficulty-1].icon} {DIFF_DATA[difficulty-1].name}</p>
-            <button className="restart-btn" onClick={handleRestart}>Revancha ♟️</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app-container"
+  }, showLearn && /*#__PURE__*/React.createElement(LearnModal, {
+    onClose: function onClose() {
+      return setShowLearn(false);
+    }
+  }), showLove && /*#__PURE__*/React.createElement(LoveModal, {
+    onClose: function onClose() {
+      return setShowLove(false);
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "layout"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "board-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "timer timer-josulo".concat(turn === "b" && !gameOver ? " timer-active" : "")
+  }, fmt(timerJosulo), " ", /*#__PURE__*/React.createElement("span", {
+    className: "timer-label"
+  }, "JOSULO")), /*#__PURE__*/React.createElement("div", {
+    className: "board-controls"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "view-toggle"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "view-btn" + (viewMode === "2d" ? " active" : ""),
+    onClick: function onClick() {
+      return setViewMode("2d");
+    }
+  }, "2D"), /*#__PURE__*/React.createElement("button", {
+    className: "view-btn" + (viewMode === "3d" ? " active" : ""),
+    onClick: function onClick() {
+      return setViewMode("3d");
+    }
+  }, "3D")), /*#__PURE__*/React.createElement("div", {
+    className: "diff-badge"
+  }, DIFF_DATA[difficulty - 1].icon, " ", DIFF_DATA[difficulty - 1].name), /*#__PURE__*/React.createElement("button", {
+    className: "learn-btn-game",
+    onClick: function onClick() {
+      return setShowLearn(true);
+    }
+  }, "\uD83D\uDCD6"), /*#__PURE__*/React.createElement("button", {
+    className: "eco-btn-game",
+    onClick: function onClick() {
+      return setShowLove(true);
+    }
+  }, "ECO \u2665")), /*#__PURE__*/React.createElement("div", {
+    className: "status-bar"
+  }, status), viewMode === "2d" ? /*#__PURE__*/React.createElement("div", {
+    className: "board-outer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "board-grid",
+    style: {
+      width: bSize,
+      height: bSize
+    }
+  }, board.map(function (row, r) {
+    return row.map(function (cell, c) {
+      var isLight = (r + c) % 2 === 1;
+      var isSel = selected && selected[0] === r && selected[1] === c;
+      var isLegal = legalMoves.some(function (m) {
+        return m.tr === r && m.tc === c;
+      });
+      var isCapL = isLegal && cell !== null;
+      var isLM = lastMove && (lastMove.fr === r && lastMove.fc === c || lastMove.tr === r && lastMove.tc === c);
+      var pk = cell ? cell.c + cell.t.toUpperCase() : null;
+      var cls = "cell " + (isLight ? "cell-light" : "cell-dark");
+      if (isSel) cls += " cell-selected";else if (isLM) cls += " " + (isLight ? "cell-lastmove-light" : "cell-lastmove-dark");
+      return /*#__PURE__*/React.createElement("div", {
+        key: r + "-" + c,
+        className: cls,
+        style: {
+          width: cellSize,
+          height: cellSize,
+          fontSize: cellSize * .7
+        },
+        onClick: function onClick() {
+          return handleCellClick(r, c);
+        }
+      }, c === 0 && /*#__PURE__*/React.createElement("span", {
+        className: "coord coord-rank"
+      }, ranks[r]), r === 7 && /*#__PURE__*/React.createElement("span", {
+        className: "coord coord-file"
+      }, files[c]), isLegal && !isCapL && /*#__PURE__*/React.createElement("div", {
+        className: "legal-dot"
+      }), isCapL && /*#__PURE__*/React.createElement("div", {
+        className: "legal-capture"
+      }), cell && /*#__PURE__*/React.createElement("span", {
+        className: "piece"
+      }, PIECES[pk]));
+    });
+  }))) : /*#__PURE__*/React.createElement("div", {
+    className: "board-3d-wrap",
+    style: {
+      width: bSize,
+      height: bSize
+    }
+  }, /*#__PURE__*/React.createElement(Board3D, {
+    board: board,
+    selected: selected,
+    legalMoves: legalMoves,
+    lastMove: lastMove,
+    onCellClick: handleCellClick,
+    size: bSize
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "timer timer-eco".concat(turn === "w" && !gameOver ? " timer-active" : "")
+  }, fmt(timerEco), " ", /*#__PURE__*/React.createElement("span", {
+    className: "timer-label"
+  }, "ECO"))), /*#__PURE__*/React.createElement("div", {
+    className: "chat-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chat-header"
+  }, "MENSAJES"), /*#__PURE__*/React.createElement("div", {
+    className: "chat-messages",
+    ref: chatRef
+  }, messages.map(function (m, i) {
+    var sc = m.sender.toLowerCase();
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "msg msg-".concat(sc === "josulo" ? "josulo" : sc === "eco" ? "eco" : "sistema")
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "msg-sender msg-sender-".concat(sc === "josulo" ? "josulo" : sc === "eco" ? "eco" : "sistema")
+    }, m.sender), m.text);
+  })), /*#__PURE__*/React.createElement("form", {
+    className: "chat-input-area",
+    onSubmit: function onSubmit(e) {
+      e.preventDefault();
+      if (!inputMsg.trim()) return;
+      setMessages(function (ms) {
+        return [].concat(_toConsumableArray(ms), [{
+          sender: "ECO",
+          text: inputMsg
+        }]);
+      });
+      setInputMsg("");
+      if (isJosulo) setTimeout(function () {
+        return setMessages(function (ms) {
+          return [].concat(_toConsumableArray(ms), [{
+            sender: "Josulo",
+            text: rnd(J_CHAT)
+          }]);
+        });
+      }, 1300);
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "chat-input",
+    value: inputMsg,
+    onChange: function onChange(e) {
+      return setInputMsg(e.target.value);
+    },
+    placeholder: "Escribe aqu\xED..."
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "send-btn"
+  }, "\u2192")))), gameOver && /*#__PURE__*/React.createElement("div", {
+    className: "end-overlay"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "end-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "3rem",
+      marginBottom: 12
+    }
+  }, gameOver.type === "checkmate" ? "♔" : gameOver.type === "timeout" ? "⏱️" : "🤝"), /*#__PURE__*/React.createElement("h2", null, gameOver.type === "checkmate" ? "¡Jaque Mate!" : gameOver.type === "timeout" ? "¡Tiempo agotado!" : "Tablas"), /*#__PURE__*/React.createElement("p", {
+    className: "sub"
+  }, gameOver.winner ? gameOver.winner === "ECO" ? "Has ganado... mi corazón 💘" : isJosulo ? "Josulo gana... pero tú ganas su admiración" : "Las negras ganan" : "Empate de estrategas"), /*#__PURE__*/React.createElement("p", {
+    className: "stats"
+  }, moveCount, " movimientos \xB7 ", fmt(600 - timerEco), " jugados \xB7 ", DIFF_DATA[difficulty - 1].icon, " ", DIFF_DATA[difficulty - 1].name), /*#__PURE__*/React.createElement("button", {
+    className: "restart-btn",
+    onClick: handleRestart
+  }, "Revancha \u265F\uFE0F"))));
 }
+ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
