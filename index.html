@@ -127,8 +127,8 @@ body{background:#020617;font-family:'Outfit',sans-serif;color:#e2e8f0;min-height
 .end-card .sub{color:#94a3b8;margin:0 0 7px}.end-card .stats{color:#475569;font-size:.74rem}
 .btn-restart{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;padding:13px 36px;border-radius:13px;font-weight:700;cursor:pointer;color:#020617;font-size:.95rem;font-family:'Outfit',sans-serif;margin-top:16px;-webkit-tap-highlight-color:transparent}
 .heart-p{position:fixed;pointer-events:none;z-index:3001;animation:heartRise 4s ease-in forwards}
-@media(max-width:860px){.layout{flex-direction:column;align-items:center;gap:10px}.chat-col{width:100%;max-height:240px;min-height:160px}.timer{font-size:1.35rem}.logo-eco{font-size:3.8rem;letter-spacing:14px;padding-right:14px}}
-@media(max-width:480px){.card{padding:34px 18px 22px}.logo-eco{font-size:3rem;letter-spacing:10px;padding-right:10px}.dn{font-size:.48rem}.pgrid{grid-template-columns:1fr}}
+@media(max-width:860px){.layout{flex-direction:column;align-items:center;gap:10px}.chat-col{width:100%;max-height:240px;min-height:160px}.timer{font-size:1.35rem}.logo-eco{font-size:3.8rem;letter-spacing:14px;padding-right:14px}.board-3d-outer{perspective:900px;perspective-origin:50% 42%;padding:8px}.b3wrap{transform:rotateX(24deg) scale(1)}.sq3 .pc{transform:translateZ(5px)}.b3wrap::after{height:14px;bottom:-14px}.b3wrap::before{bottom:-28px;height:18px;filter:blur(8px)}}
+@media(max-width:480px){.card{padding:34px 18px 22px}.logo-eco{font-size:3rem;letter-spacing:10px;padding-right:10px}.dn{font-size:.48rem}.pgrid{grid-template-columns:1fr}.board-3d-outer{perspective:1000px;perspective-origin:50% 44%;padding:5px;border-radius:10px}.b3wrap{transform:rotateX(18deg) scale(1);border-width:1px}.sq3 .pc{transform:translateZ(3px)}.b3wrap::after{height:10px;bottom:-10px}.b3wrap::before{bottom:-20px;height:14px;filter:blur(6px)}}
 </style>
 </head>
 <body>
@@ -343,7 +343,7 @@ function schedAI(){
     if(S.turn!=="b"||S.over)return;
     const mv=getBest(S.board,"b",S.cas,S.ep,S.diff);if(!mv)return;
     const res=execMove(mv);
-    addMsg("Josulo",res.ck?rnd(JC):res.cap?rnd(JX):rnd(JA));setStatus("Tu turno, ECO ♟️");
+    if(S.isJ){addMsg("Josulo",res.ck?rnd(JC):res.cap?rnd(JX):rnd(JA));}setStatus("Tu turno, ECO ♟️");
   },S.diff<=2?Math.random()*1200+900:Math.random()*800+1600);
 }
 function startTimer(){
