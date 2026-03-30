@@ -75,6 +75,9 @@ body{background:#020617;font-family:'Outfit',sans-serif;color:#e2e8f0;min-height
 .sq3.sel3{background:rgba(56,189,248,.55)!important}
 .sq3.legal3{background:rgba(56,189,248,.28)!important}
 .sq3.legalcap3{outline:3px solid rgba(56,189,248,.55)!important}
+.b3wrap::after{content:'';position:absolute;bottom:-16px;left:0;right:0;height:16px;background:linear-gradient(180deg,#3a1a07,#1a0c02);transform:rotateX(-90deg);transform-origin:top center;border-bottom:1px solid rgba(56,189,248,.1)}
+.b3wrap::before{content:'';position:absolute;left:0;right:0;bottom:-30px;height:20px;background:radial-gradient(ellipse at center,rgba(0,0,0,.5) 0%,transparent 70%);filter:blur(8px);z-index:-1;transform:rotateX(-90deg) translateZ(-10px)}
+.b3wrap>.sq3:nth-child(-n+8){box-shadow:inset 0 2px 4px rgba(255,255,255,.08)}
 .chat-col{flex:1;background:rgba(15,23,42,.8);border-radius:18px;display:flex;flex-direction:column;border:1px solid rgba(30,41,59,.8);min-width:230px;max-height:calc(100vh - 36px)}
 .chat-hd{padding:12px;border-bottom:1px solid #1e293b;color:#38bdf8;letter-spacing:3px;font-weight:600;text-align:center;font-size:.72rem;font-family:'Space Mono',monospace}
 .chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px}
