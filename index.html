@@ -131,13 +131,40 @@ body{background:#020617;font-family:'Outfit',sans-serif;color:#e2e8f0;min-height
 .end-card .sub{color:#94a3b8;margin:0 0 7px}.end-card .stats{color:#475569;font-size:.74rem}
 .btn-restart{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;padding:13px 36px;border-radius:13px;font-weight:700;cursor:pointer;color:#020617;font-size:.95rem;font-family:'Outfit',sans-serif;margin-top:16px;-webkit-tap-highlight-color:transparent}
 .heart-p{position:fixed;pointer-events:none;z-index:3001;animation:heartRise 4s ease-in forwards}
-@media(max-width:860px){.layout{flex-direction:column;align-items:center;gap:10px}.chat-col{width:100%;max-height:240px;min-height:160px}.timer{font-size:1.35rem}.logo-eco{font-size:3.8rem;letter-spacing:14px;padding-right:14px}.board-3d-outer{perspective:900px;perspective-origin:50% 42%;padding:10px 10px 22px 10px}.b3scene{transform:rotateX(24deg) scale(1)}.sq3 .pc{transform:translateZ(5px)}.b3front{height:16px}.b3right{width:16px}}
-@media(max-width:480px){.card{padding:34px 18px 22px}.logo-eco{font-size:3rem;letter-spacing:10px;padding-right:10px}.dn{font-size:.48rem}.pgrid{grid-template-columns:1fr}.board-3d-outer{perspective:1000px;perspective-origin:50% 44%;padding:6px 6px 18px 6px;border-radius:10px}.b3scene{transform:rotateX(18deg) scale(1)}.sq3 .pc{transform:translateZ(3px)}.b3front{height:12px}.b3right{width:12px}}
+@keyframes introFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes introGlow{0%,100%{text-shadow:0 0 28px rgba(56,189,248,1),0 0 65px rgba(56,189,248,.6)}50%{text-shadow:0 0 42px rgba(56,189,248,1),0 0 90px rgba(56,189,248,.8),0 0 120px rgba(56,189,248,.4)}}
+@keyframes introLetterReveal{from{opacity:0;transform:translateY(20px) scale(.7)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes introDedicateFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#screen-intro{position:fixed;inset:0;z-index:10000;background:#010410;display:flex;justify-content:center;align-items:center;flex-direction:column;overflow:hidden}
+#intro-canvas{position:absolute;inset:0;width:100%;height:100%}
+.intro-content{position:relative;z-index:2;text-align:center;pointer-events:none}
+.intro-eco-text{font-family:'Space Mono',monospace;font-size:4.8rem;font-weight:700;letter-spacing:18px;color:#bae6fd;display:inline-flex;gap:4px}
+.intro-eco-text span{display:inline-block;opacity:0;animation:introLetterReveal .5s ease-out forwards}
+.intro-version{font-family:'Space Mono',monospace;font-size:.7rem;color:#38bdf8;border:1px solid rgba(56,189,248,.4);padding:3px 12px;border-radius:16px;letter-spacing:3px;opacity:0;display:inline-block;margin-top:10px}
+.intro-dedicate{margin-top:24px;opacity:0}
+.intro-dedicate .intro-para{font-family:'Outfit',sans-serif;font-size:1.05rem;color:#f9a8d4;margin:0 0 6px}
+.intro-dedicate .intro-sign{font-family:'Space Mono',monospace;font-size:.78rem;color:#f472b6;letter-spacing:2px}
+#intro-skip{position:absolute;bottom:28px;right:28px;z-index:3;background:none;border:1px solid rgba(71,85,105,.4);color:#475569;font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:3px;padding:6px 14px;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:all .3s;-webkit-tap-highlight-color:transparent}
+#intro-skip:hover{color:#94a3b8;border-color:rgba(148,163,184,.4)}
+@media(max-width:860px){.layout{flex-direction:column;align-items:center;gap:10px}.chat-col{width:100%;max-height:240px;min-height:160px}.timer{font-size:1.35rem}.logo-eco{font-size:3.8rem;letter-spacing:14px;padding-right:14px}.board-3d-outer{perspective:900px;perspective-origin:50% 42%;padding:10px 10px 22px 10px}.b3scene{transform:rotateX(24deg) scale(1)}.sq3 .pc{transform:translateZ(5px)}.b3front{height:16px}.b3right{width:16px}.intro-eco-text{font-size:3.6rem;letter-spacing:12px}}
+@media(max-width:480px){.card{padding:34px 18px 22px}.logo-eco{font-size:3rem;letter-spacing:10px;padding-right:10px}.dn{font-size:.48rem}.pgrid{grid-template-columns:1fr}.board-3d-outer{perspective:1000px;perspective-origin:50% 44%;padding:6px 6px 18px 6px;border-radius:10px}.b3scene{transform:rotateX(18deg) scale(1)}.sq3 .pc{transform:translateZ(3px)}.b3front{height:12px}.b3right{width:12px}.intro-eco-text{font-size:2.8rem;letter-spacing:8px}#intro-skip{bottom:16px;right:16px}}
 </style>
 </head>
 <body>
 <div id="confetti" style="position:fixed;inset:0;pointer-events:none;z-index:9999"></div>
-<div id="screen-login">
+<div id="screen-intro">
+  <canvas id="intro-canvas"></canvas>
+  <div class="intro-content">
+    <div class="intro-eco-text" id="intro-eco"><span style="animation-delay:1s">E</span><span style="animation-delay:1.2s">C</span><span style="animation-delay:1.4s">O</span></div>
+    <div><span class="intro-version" id="intro-ver">v 3 . 0</span></div>
+    <div class="intro-dedicate" id="intro-ded">
+      <p class="intro-para">Para ti, mi ECO</p>
+      <p class="intro-sign">con todo mi amor — Josulo ♟️</p>
+    </div>
+  </div>
+  <button id="intro-skip">Saltar</button>
+</div>
+<div id="screen-login" class="hidden">
   <div class="card">
     <div class="logo-wrap"><span class="logo-eco">ECO</span></div>
     <p class="tagline">Estrategia &amp; Amor</p>
@@ -207,6 +234,88 @@ body{background:#020617;font-family:'Outfit',sans-serif;color:#e2e8f0;min-height
   </div>
 </div>
 <script>
+/* === CINEMATIC INTRO === */
+(function(){
+const intro=document.getElementById('screen-intro');
+if(!intro)return;
+const seen=localStorage.getItem('eco_intro_seen');
+if(seen){intro.remove();document.getElementById('screen-login').classList.remove('hidden');return}
+const cvs=document.getElementById('intro-canvas'),ctx=cvs.getContext('2d');
+let W,H,particles=[],animId,dead=false;
+function resize(){W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+const COLORS=['#38bdf8','#38bdf8','#38bdf8','#38bdf8','#38bdf8','#38bdf8','#38bdf8','#f472b6','#f472b6','#facc15'];
+const PCOUNT=window.innerWidth<500?40:60;
+/* queen silhouette target points (normalized -1..1) */
+const QP=[
+[0,.85],[-.35,.65],[-.45,.5],[-.38,.3],[-.5,.15],[-.3,0],[-.2,-.15],[-.15,-.35],[-.08,-.55],[0,-.7],[.08,-.55],[.15,-.35],[.2,-.15],[.3,0],[.5,.15],[.38,.3],[.45,.5],[.35,.65],[0,.85]
+];
+for(let i=0;i<PCOUNT;i++){
+const a=Math.random()*Math.PI*2,r=Math.random()*Math.max(W,H)*.6;
+const qi=Math.floor(Math.random()*QP.length);
+const tx=W/2+QP[qi][0]*70,ty=H/2+QP[qi][1]*100;
+particles.push({x:W/2+Math.cos(a)*r,y:H/2+Math.sin(a)*r,tx,ty,
+ox:W/2+Math.cos(a)*r,oy:H/2+Math.sin(a)*r,
+sz:Math.random()*2.5+1.5,col:COLORS[Math.floor(Math.random()*COLORS.length)],
+spd:Math.random()*.5+.3,phase:Math.random()*Math.PI*2})
+}
+const t0=performance.now();
+function draw(now){
+if(dead)return;
+const el=(now-t0)/1000;
+ctx.clearRect(0,0,W,H);
+/* Scene 1: 0-1s scatter, Scene 2: 1-3s converge */
+const converge=Math.max(0,Math.min(1,(el-0.8)/1.2));
+const scatter=el>4.5?Math.min(1,(el-4.5)/0.7):0;
+for(const p of particles){
+const cx=p.ox+(p.tx-p.ox)*converge;
+const cy=p.oy+(p.ty-p.oy)*converge;
+const drift=Math.sin(now/1000*p.spd+p.phase)*3*(1-converge);
+if(scatter>0){
+const sa=Math.atan2(p.ty-H/2,p.tx-W/2)+Math.random()*.2;
+p.x=cx+Math.cos(sa)*scatter*400+drift;
+p.y=cy+Math.sin(sa)*scatter*400+drift;
+}else{p.x=cx+drift;p.y=cy+drift}
+const alpha=scatter>0?1-scatter:Math.min(1,el/.5);
+ctx.beginPath();ctx.arc(p.x,p.y,p.sz*(1+converge*.5),0,Math.PI*2);
+ctx.fillStyle=p.col;ctx.globalAlpha=alpha;ctx.fill()
+}
+/* flash at convergence */
+if(el>1.6&&el<2.1){
+const fl=1-Math.abs(el-1.8)/.3;
+ctx.globalAlpha=fl*.3;ctx.fillStyle='#38bdf8';ctx.fillRect(0,0,W,H)
+}
+/* hearts in scene 3 */
+if(el>3&&el<4.5){
+ctx.globalAlpha=Math.min(1,(el-3)/.3)*(el<4?1:1-(el-4)/.5);
+ctx.font='18px serif';
+for(let i=0;i<12;i++){
+const ha=(i/12)*Math.PI*2+el*.3;
+const hr=80+Math.sin(el*2+i)*30;
+ctx.fillText('💖',W/2+Math.cos(ha)*hr-9,H/2+Math.sin(ha)*hr+50)
+}
+}
+ctx.globalAlpha=1;
+animId=requestAnimationFrame(draw)
+}
+animId=requestAnimationFrame(draw);
+/* Reveal version badge at 1.6s */
+setTimeout(()=>{const v=document.getElementById('intro-ver');if(v){v.style.animation='introFadeIn .5s ease-out forwards'}},1600);
+/* Reveal dedication at 3s */
+setTimeout(()=>{const d=document.getElementById('intro-ded');if(d){d.style.animation='introDedicateFade .8s ease-out forwards'}},3000);
+/* Auto-end at 5.2s */
+function endIntro(){
+if(dead)return;dead=true;
+cancelAnimationFrame(animId);
+localStorage.setItem('eco_intro_seen','1');
+intro.style.transition='opacity .6s ease-out';
+intro.style.opacity='0';
+setTimeout(()=>{intro.remove();const login=document.getElementById('screen-login');login.classList.remove('hidden');login.style.animation='introFadeIn .6s ease-out'},600)
+}
+setTimeout(endIntro,5200);
+document.getElementById('intro-skip').onclick=endIntro;
+})();
+/* === END INTRO === */
 const PP={wK:"♔",wQ:"♕",wR:"♖",wB:"♗",wN:"♘",wP:"♙",bK:"♚",bQ:"♛",bR:"♜",bB:"♝",bN:"♞",bP:"♟"};
 function svgPc(d,c){const gid=c==='w'?'pfW':'pfB';const df=c==='w'?'<defs><radialGradient id="pfW" cx="45%" cy="38%" r="52%"><stop offset="0%" stop-color="#f8fafc"/><stop offset="55%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#94a3b8"/></radialGradient></defs>':'<defs><radialGradient id="pfB" cx="45%" cy="38%" r="52%"><stop offset="0%" stop-color="#475569"/><stop offset="55%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/></radialGradient></defs>';const s=c==='w'?'#64748b':'#0f172a';return'<svg viewBox="0 0 45 45" style="width:1em;height:1em" xmlns="http://www.w3.org/2000/svg">'+df+'<g fill="url(#'+gid+')" stroke="'+s+'" stroke-width="1.5" stroke-linejoin="round">'+d+'</g></svg>'}
 const SP={
