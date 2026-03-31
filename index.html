@@ -208,7 +208,7 @@ body{background:#020617;font-family:'Outfit',sans-serif;color:#e2e8f0;min-height
 </div>
 <script>
 const PP={wK:"♔",wQ:"♕",wR:"♖",wB:"♗",wN:"♘",wP:"♙",bK:"♚",bQ:"♛",bR:"♜",bB:"♝",bN:"♞",bP:"♟"};
-function svgPc(d,c){const f=c==='w'?'#e2e8f0':'#1e293b',s=c==='w'?'#64748b':'#0f172a';return'<svg viewBox="0 0 45 45" style="width:1em;height:1em" xmlns="http://www.w3.org/2000/svg"><g fill="'+f+'" stroke="'+s+'" stroke-width="1.5" stroke-linejoin="round">'+d+'</g></svg>'}
+function svgPc(d,c){const df=c==='w'?'<defs><radialGradient id="pf" cx="45%" cy="38%" r="52%"><stop offset="0%" stop-color="#f8fafc"/><stop offset="55%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#94a3b8"/></radialGradient></defs>':'<defs><radialGradient id="pf" cx="45%" cy="38%" r="52%"><stop offset="0%" stop-color="#475569"/><stop offset="55%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/></radialGradient></defs>';const s=c==='w'?'#64748b':'#0f172a';return'<svg viewBox="0 0 45 45" style="width:1em;height:1em" xmlns="http://www.w3.org/2000/svg">'+df+'<g fill="url(#pf)" stroke="'+s+'" stroke-width="1.5" stroke-linejoin="round">'+d+'</g></svg>'}
 const SP={
 p:'<path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03C15.41 27.09 11 31 11 36h23c0-5-4.41-8.91-7.41-9.97A5.97 5.97 0 0029 21c0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"/>',
 r:'<path d="M9 39h27v-3H9v3zm3.5-7l1.5-2.5h17l1.5 2.5h-20zm-.5-4.5v-4h5v-3H12V15h5v-4.5h2.5v4.5h5v-4.5h2.5v4.5h5V20.5h-5v3h5v4H12z"/>',
