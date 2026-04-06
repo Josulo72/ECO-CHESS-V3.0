@@ -1,0 +1,131 @@
+{
+  "name": "Agentic Workflow - [DOMAIN]",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-001",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "{{$guid}}"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "={{$json.systemPrompt || '[SYSTEM PROMPT]'}}"
+        },
+        "promptType": "define",
+        "text": "={{$json.userMessage || $json.body.message}}"
+      },
+      "id": "agent-001",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-20250514",
+        "options": {
+          "maxTokensToSample": 4096,
+          "temperature": 0.3
+        }
+      },
+      "id": "model-001",
+      "name": "Claude Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [380, 500]
+    },
+    {
+      "parameters": {
+        "toolDescription": "=[TOOL DESCRIPTION]",
+        "method": "POST",
+        "url": "=[API ENDPOINT]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$credentials.apiKey}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "tool-http-001",
+      "name": "HTTP Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [520, 500]
+    },
+    {
+      "parameters": {
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "response-001",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Error handler - catches and formats errors\nconst error = $input.last().error;\nreturn [{\n  json: {\n    success: false,\n    error: error.message || 'Unknown error',\n    timestamp: new Date().toISOString(),\n    retryable: error.httpCode >= 500\n  }\n}];"
+      },
+      "id": "error-001",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 500]
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [{ "node": "AI Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude Model": {
+      "ai_languageModel": [
+        [{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "HTTP Tool": {
+      "ai_tool": [
+        [{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Error Handler": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "agentic" },
+    { "name": "claude" }
+  ],
+  "triggerCount": 1,
+  "pinData": {}
+}

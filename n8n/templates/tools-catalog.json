@@ -1,0 +1,82 @@
+{
+  "_description": "Catalog of reusable tool node templates for n8n agentic workflows",
+  "tools": {
+    "http_get": {
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "parameters": {
+        "toolDescription": "[DESCRIBE what this GET endpoint returns]",
+        "method": "GET",
+        "url": "[ENDPOINT_URL]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.apiKey}}" }
+          ]
+        }
+      }
+    },
+    "http_post": {
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "parameters": {
+        "toolDescription": "[DESCRIBE what this POST endpoint does]",
+        "method": "POST",
+        "url": "[ENDPOINT_URL]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.apiKey}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+    "code_js": {
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "parameters": {
+        "name": "[tool_name]",
+        "description": "[What this tool computes or processes]",
+        "language": "javaScript",
+        "jsCode": "// Tool logic\nreturn { result: '' };"
+      }
+    },
+    "postgres_query": {
+      "type": "@n8n/n8n-nodes-langchain.toolPostgres",
+      "typeVersion": 1,
+      "parameters": {
+        "toolDescription": "Query the database to retrieve or modify data"
+      }
+    },
+    "vector_store_search": {
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "parameters": {
+        "toolDescription": "Search the knowledge base for relevant documents"
+      }
+    },
+    "sub_workflow": {
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "parameters": {
+        "name": "[sub_task_name]",
+        "description": "[What this sub-workflow handles]",
+        "workflowId": ""
+      }
+    },
+    "calculator": {
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "parameters": {}
+    },
+    "wikipedia": {
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "parameters": {}
+    }
+  }
+}

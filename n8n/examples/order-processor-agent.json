@@ -1,0 +1,142 @@
+{
+  "name": "Agentic Workflow - Order Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "process-order",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-001",
+      "name": "Order Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "order-processor-webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an intelligent order processing agent for an e-commerce platform.\n\nYour responsibilities:\n1. Validate incoming orders (check required fields, product availability, pricing)\n2. Classify order priority (urgent, standard, bulk)\n3. Route orders to the appropriate fulfillment pipeline\n4. Handle edge cases (partial inventory, address validation issues)\n\nRules:\n- ALWAYS validate the order before processing\n- Flag orders over $10,000 for manual review\n- Apply bulk discount (10%) for orders with 50+ items\n- Respond with structured JSON including: orderId, status, priority, actions taken, and any warnings"
+        },
+        "promptType": "define",
+        "text": "Process this order:\n\n{{ JSON.stringify($json.body, null, 2) }}"
+      },
+      "id": "agent-001",
+      "name": "Order Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-20250514",
+        "options": {
+          "maxTokensToSample": 4096,
+          "temperature": 0.1
+        }
+      },
+      "id": "model-001",
+      "name": "Claude Sonnet",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [380, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Check product inventory and availability. Send a GET request with productId to check stock levels.",
+        "method": "GET",
+        "url": "={{$credentials.inventoryApiUrl}}/api/products/{{$json.productId}}/stock",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.inventoryApiKey}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        }
+      },
+      "id": "tool-inventory-001",
+      "name": "Check Inventory",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [520, 520]
+    },
+    {
+      "parameters": {
+        "name": "calculate_order_total",
+        "description": "Calculate the total price for an order including taxes, discounts, and shipping. Input should be a JSON string with items array (each with price and quantity), taxRate, and shippingCost.",
+        "language": "javaScript",
+        "jsCode": "const input = JSON.parse($input);\nconst items = input.items || [];\nconst subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);\nconst totalItems = items.reduce((sum, item) => sum + item.quantity, 0);\nconst bulkDiscount = totalItems >= 50 ? 0.10 : 0;\nconst discountedSubtotal = subtotal * (1 - bulkDiscount);\nconst tax = discountedSubtotal * (input.taxRate || 0.08);\nconst shipping = input.shippingCost || 0;\nconst total = discountedSubtotal + tax + shipping;\nreturn JSON.stringify({\n  subtotal: subtotal.toFixed(2),\n  bulkDiscount: bulkDiscount > 0 ? `${(bulkDiscount * 100)}%` : 'none',\n  discountedSubtotal: discountedSubtotal.toFixed(2),\n  tax: tax.toFixed(2),\n  shipping: shipping.toFixed(2),\n  total: total.toFixed(2),\n  totalItems,\n  flagForReview: total > 10000\n});"
+      },
+      "id": "tool-calc-001",
+      "name": "Calculate Total",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [660, 520]
+    },
+    {
+      "parameters": {
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "response-001",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const error = $input.last().error;\nconst orderId = $input.first()?.json?.body?.orderId || 'unknown';\nreturn [{\n  json: {\n    success: false,\n    orderId: orderId,\n    error: error.message || 'Order processing failed',\n    timestamp: new Date().toISOString(),\n    retryable: error.httpCode ? error.httpCode >= 500 : true,\n    action: 'Please retry or contact support'\n  }\n}];"
+      },
+      "id": "error-001",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 520]
+    }
+  ],
+  "connections": {
+    "Order Webhook": {
+      "main": [
+        [{ "node": "Order Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Order Agent": {
+      "main": [
+        [{ "node": "Send Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude Sonnet": {
+      "ai_languageModel": [
+        [{ "node": "Order Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Check Inventory": {
+      "ai_tool": [
+        [{ "node": "Order Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Calculate Total": {
+      "ai_tool": [
+        [{ "node": "Order Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "agentic" },
+    { "name": "claude" },
+    { "name": "orders" },
+    { "name": "e-commerce" }
+  ],
+  "triggerCount": 1,
+  "pinData": {}
+}
